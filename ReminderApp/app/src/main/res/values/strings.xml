@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">ReminderApp</string>
+    <string name="app_name">GoTime</string>
+    <string name="action_settings">Settings</string>
+    <string name="add_event">Add Event</string>
 </resources>
