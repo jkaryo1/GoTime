@@ -2,4 +2,28 @@
     <string name="app_name">GoTime</string>
     <string name="action_settings">Settings</string>
     <string name="add_event">Add Event</string>
+
+    <!--Strings for Event add/edit fragment-->
+    <string name="titleLabel">Event Title</string>
+    <string name="titleHint">Enter title...</string>
+
+    <string name="dateLabel">Event Date</string>
+
+    <string name="timeLabel">Event Time</string>
+
+    <string name="prepTimeLabel">Event Title</string>
+
+    <string name="transportMethodLabel">Event Title</string>
+
+    <string name="locLabel">Event Location</string>
+    <string name="locHint">Enter Location Address...</string>
+
+    <string name="cancelButton">Cancel</string>
+    <string name="saveButton">Save</string>
+
+    <string-array name="transportOptions">
+        <item>Walking</item>
+        <item>Driving</item>
+        <item>Biking</item>
+    </string-array>
 </resources>
