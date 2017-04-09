@@ -19,9 +19,9 @@
             android:layout_height="wrap_content"
             android:text="@string/titleLabel"/>
         <EditText
-            android:background="@drawable/rounded_rectangle"
+            style="@style/EditTextRounded"
             android:id="@+id/title_input"
-            android:hint=""
+            android:hint="@string/titleHint"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -31,8 +31,11 @@
             android:text="@string/dateLabel" />
 
         <EditText
+            style="@style/EditTextRounded"
+            android:id="@+id/date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusableInTouchMode="false"
             android:hint="Date" />
 
         <TextView
@@ -41,8 +44,11 @@
             android:text="@string/timeLabel" />
 
         <EditText
+            style="@style/EditTextRounded"
+            android:id="@+id/time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:focusableInTouchMode="false"
             android:hint="Time" />
 
         <TextView
@@ -51,9 +57,11 @@
             android:text="@string/prepTimeLabel" />
 
         <EditText
+            android:id="@+id/prep_time"
+            style="@style/EditTextRounded"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter Time..." />
+            android:hint="Enter Prep Time..." />
 
         <TextView
             android:layout_width="match_parent"
@@ -61,10 +69,11 @@
             android:text="@string/transportMethodLabel"/>
 
         <Spinner
+            style="@style/EditTextRounded"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:entries="@array/transportOptions"
-            android:id="@+id/spinner" />
+            android:id="@+id/transport_spinner" />
 
         <TextView
             android:layout_width="match_parent"
@@ -72,6 +81,8 @@
             android:text="@string/locLabel" />
 
         <EditText
+            android:id="@+id/loc_input"
+            style="@style/EditTextRounded"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/locHint" />
@@ -82,6 +93,7 @@
             android:layout_height="wrap_content">
 
             <Button
+                android:id="@+id/cancelButton"
                 style="@style/ButtonStyle"
                 android:layout_weight="1"
                 android:text="@string/cancelButton"
@@ -89,6 +101,7 @@
                 android:layout_height="wrap_content" />
 
             <Button
+                android:id="@+id/saveButton"
                 style="@style/ButtonStyle"
                 android:layout_weight="1"
                 android:text="@string/saveButton"

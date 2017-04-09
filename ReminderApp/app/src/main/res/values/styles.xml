@@ -25,6 +25,11 @@
         <item name="android:textColor">@color/white</item>
     </style>
 
+    <style name="EditTextRounded">
+        <item name="android:background">@drawable/rounded_rectangle</item>
+        <item name="android:layout_marginBottom">10dp</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
