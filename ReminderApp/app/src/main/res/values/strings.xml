@@ -2,4 +2,14 @@
     <string name="app_name">GoTime</string>
     <string name="action_settings">Settings</string>
     <string name="add_event">Add Event</string>
+    <string-array name="travelMethod">
+        <item>Walking</item>
+        <item>Biking</item>
+        <item>Driving</item>
+    </string-array>
+    <string-array name="alarm">
+        <item>Alarm Sound #1</item>
+        <item>Alarm Sound #2</item>
+        <item>Alarm Sound #3</item>
+    </string-array>
 </resources>
