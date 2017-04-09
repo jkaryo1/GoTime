@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:weightSum="16"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp">
+
+    <TextView
+        android:id="@+id/lesson_date"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="5"
+        android:textColor="@color/textColorPrimary"
+        android:gravity="start|center_vertical"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/lesson_hours"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="7"
+        android:gravity="center"
+        android:textColor="@color/textColorPrimary"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/lesson_type_image"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:padding="3dp"
+        android:contentDescription="@string/lesson_type"/>
+
+    <ImageView
+        android:id="@+id/lesson_weather_image"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:padding="3dp"
+        android:layout_marginStart="3dp"
+        android:layout_marginLeft="3dp"
+        android:contentDescription="@string/weather_conditions"/>
+
+</LinearLayout>
