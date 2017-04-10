@@ -1,116 +1,76 @@
-package com.example.driversed;
+package com.example.reminderapp;
 
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-
+import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-class LessonListAdapter extends RecyclerView.Adapter<LessonListAdapter.LessonHolder> {
+class EventListAdapter extends RecyclerView.Adapter<EventListAdapter.LessonHolder> {
 
-    private FragmentManager fragmentManager;
-    private Context context;
-    private ArrayList<Lesson> lessonList;
+    private ArrayList<Event> eventList;
 
-    LessonListAdapter (ArrayList<Lesson> list, FragmentManager fm, Context c) {
-        this.lessonList = list;
-        this.fragmentManager = fm;
-        this.context = c;
+    EventListAdapter(ArrayList<Event> list) {
+        this.eventList = list;
     }
 
     @Override
     public LessonHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.single_lesson, parent, false);
-        return new LessonHolder(v, fragmentManager, context);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.single_event, parent, false);
+        return new LessonHolder(v);
     }
 
     @Override
     public void onBindViewHolder(LessonHolder holder, int position) {
-        Lesson l = lessonList.get(position);
-        holder.bindData(l);
+        Event e = eventList.get(position);
+        holder.bindData(e);
     }
 
     @Override
     public int getItemCount() {
-        return lessonList.size();
+        return eventList.size();
     }
 
     class LessonHolder extends RecyclerView.ViewHolder {
-        private Lesson lesson;
-        ImageView typeImageView;
-        ImageView weatherImageView;
-        TextView dateTextView;
-        TextView hoursTextView;
-        private FragmentManager fragmentManager;
-        private Context context;
+        private Event event;
+        TextView eventTitle;
+        TextView eventLocation;
+        TextView eventTime;
 
-        LessonHolder(View itemView, FragmentManager fm, Context c) {
+        LessonHolder(View itemView) {
             super(itemView);
-            typeImageView = (ImageView) itemView.findViewById(R.id.lesson_type_image);
-            weatherImageView = (ImageView) itemView.findViewById(R.id.lesson_weather_image);
-            dateTextView = (TextView) itemView.findViewById(R.id.lesson_date);
-            hoursTextView = (TextView) itemView.findViewById(R.id.lesson_hours);
-            fragmentManager = fm;
-            context = c;
+            eventTitle = (TextView) itemView.findViewById(R.id.event_title);
+            eventLocation = (TextView) itemView.findViewById(R.id.event_location);
+            eventTime = (TextView) itemView.findViewById(R.id.event_time);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(context, ViewLessonActivity.class);
-                    intent.putExtra("DATE", lesson.getDate());
-                    intent.putExtra("HOURS", lesson.getHours());
-                    intent.putExtra("LESSON_TYPE", lesson.getLessonType());
-                    intent.putExtra("WEATHER", lesson.getWeather());
-                    intent.putExtra("DAY", lesson.getDay());
-                    context.startActivity(intent);
-                    ((Activity) context).overridePendingTransition(R.transition.enter, R.transition.stack);
-                }
-            });
+//            itemView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Intent intent = new Intent(this, ViewEventActivity.class);
+//                    intent.putExtra("TITLE", event.getTitle());
+//                    intent.putExtra("DATE", event.getDate());
+//                    intent.putExtra("TIME", event.getTime());
+//                    intent.putExtra("PREP_TIME", event.getPrepTime());
+//                    intent.putExtra("TRANSPORT", event.getTransport());
+//                    intent.putExtra("LOCATION", event.getLocation());
+//                    context.startActivity(intent);
+//                    ((Activity) context).overridePendingTransition(R.transition.enter, R.transition.stack);
+//                }
+//            });
         }
 
-        void bindData(Lesson l) {
-            lesson = l;
-            Drawable typeImage;
-            Drawable weatherImage;
-            String lessonType = lesson.getLessonType();
-            switch (lessonType) {
-                case "Highway":
-                    typeImage = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_highway, null);
-                    break;
-                case "Commercial":
-                    typeImage = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_commercial, null);
-                    break;
-                case "Residential": default:
-                    typeImage = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_residential, null);
-                    break;
-            }
-            typeImageView.setImageDrawable(typeImage);
-            String weather = lesson.getWeather();
-            switch (weather) {
-                case "Rainy":
-                    weatherImage = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_rainy, null);
-                    break;
-                case "Snowy":
-                    weatherImage = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_snowy, null);
-                    break;
-                case "Clear": default:
-                    weatherImage = ResourcesCompat.getDrawable(context.getResources(), R.drawable.ic_clear, null);
-                    break;
-            }
-            weatherImageView.setImageDrawable(weatherImage);
-            dateTextView.setText(lesson.getDate());
-            String time = String.format(Locale.getDefault(), "%1$.2f", lesson.getHours()) + " hours";
-            hoursTextView.setText(time);
+        void bindData(Event e) {
+            event = e;
+            eventTitle.setText(e.getTitle());
+//            Time time = event.getTime();
+//            SimpleDateFormat format = new SimpleDateFormat("HH:mm a", Locale.getDefault());
+//            String timeString = format.format(time);
+            eventTime.setText(e.getTime());
+            eventLocation.setText(e.getLocation());
         }
     }
 }

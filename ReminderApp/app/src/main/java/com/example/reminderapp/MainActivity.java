@@ -8,14 +8,30 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
-
+    private ArrayList<Event> eventArrayList;
+    private String[] titles = {"Event 1", "Event 2", "Event 3"};
+    private String[] dates = {"04/10/2017", "04/11/2017", "04/12/2017"};
+    private String[] times = {"02:23 PM", "11:38 AM", "09:10 PM"};
+    private Integer[] prepTimes = {15, 5, 10};
+    private String[] transports = {"Driving", "Walking", "Biking"};
+    private String[] locations = {"Location 1", "Location 2", "Location 3"};
+    private RecyclerView recyclerView;
+    private SearchView searchView;
+    private EventListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,12 +39,27 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         /*Set up Toolbar, hide default title*/
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        this.toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
+
+//        this.searchView = (SearchView) findViewById(R.id.event_search);
+
+
+        this.eventArrayList = new ArrayList<>();
+        for(int i = 0; i < titles.length; i++){
+            Event e = new Event(this.titles[i], this.dates[i], this.times[i], this.prepTimes[i],
+                    this.transports[i], this.locations[i]);
+            this.eventArrayList.add(e);
+        }
+        this.recyclerView = (RecyclerView) findViewById(R.id.event_recycler_view);
+//        DividerItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(), LinearLayoutManager.VERTICAL);
+//        this.recyclerView.addItemDecoration(divider);
+        this.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        updateUI();
     }
 
     @Override
@@ -86,4 +117,8 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void updateUI(){
+        this.adapter = new EventListAdapter(this.eventArrayList);
+        recyclerView.setAdapter(this.adapter);
+    }
 }

@@ -1,53 +1,63 @@
-package com.example.driversed;
+package com.example.reminderapp;
 
-class Lesson {
+import java.sql.Time;
+import java.util.Date;
 
+class Event {
+
+    private String title;
     private String date;
-    private Double hours;
-    private String lessonType;
-    private String weather;
-    private boolean day;
+    private String time;
+    private Integer prepTime;
+    private String transport;
+    private String location;
 
-    Lesson(String d, Double h, String l, String w, boolean da) {
+    Event(String tit, String d, String tim, Integer p, String tra, String l) {
+        this.title = tit;
         this.date = d;
-        this.hours = h;
-        this.lessonType = l;
-        this.weather = w;
-        this.day = da;
+        this.time = tim;
+        this.prepTime = p;
+        this.transport = tra;
+        this.location = l;
     }
 
-    public Lesson() {}
+    public Event() {}
 
+    public void setTitle(String t) {
+        this.title = t;
+    }
     public void setDate(String d) {
         this.date = d;
     }
-    public void setHours(Double h) {
-        this.hours = h;
+    public void setTime(String t) {
+        this.time = t;
     }
-    public void setLessonType(String l) {
-        this.lessonType = l;
+    public void setPrepTime(Integer p) {
+        this.prepTime = p;
     }
-    public void setWeather(String w) {
-        this.weather = w;
+    public void setTransport(String t) {
+        this.transport = t;
     }
-    public void setDay(boolean d) {
-        this.day = d;
+    public void setLocation(String l) {
+        this.location = l;
     }
 
+    String getTitle() {
+        return this.title;
+    }
     String getDate() {
         return this.date;
     }
-    Double getHours() {
-        return this.hours;
+    String getTime() {
+        return this.time;
     }
-    String getLessonType() {
-        return this.lessonType;
+    Integer getPrepTime () {
+        return this.prepTime;
     }
-    String getWeather() {
-        return this.weather;
+    String getTransport() {
+        return this.transport;
     }
-    boolean getDay() {
-        return this.day;
+    String getLocation() {
+        return this.location;
     }
-
 }
