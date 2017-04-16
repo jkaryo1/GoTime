@@ -37,16 +37,10 @@
                 android:layout_height="40dp"
                 android:inputType="number"
                 android:ems="10"
-                android:id="@+id/editText"
-                android:text="15"
-                android:layout_width="40dp" />
+                android:id="@+id/defaultPrepTime"
+                android:text="15 minutes"
+                android:layout_width="match_parent" />
 
-            <TextView
-                android:text="minutes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/textView2"
-                android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
         </LinearLayout>
 
         <TextView
@@ -58,7 +52,7 @@
         <Spinner
             android:layout_width="match_parent"
             android:entries="@array/alarm"
-            android:id="@+id/spinner"
+            android:id="@+id/alarmType"
             android:layout_weight="0.25"
             android:layout_height="40dp" />
 
@@ -73,7 +67,7 @@
         <Spinner
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/spinner2"
+            android:id="@+id/defaultTransportMethod"
             android:entries="@array/travelMethod"
             android:layout_weight="0.13" />
 
@@ -82,7 +76,7 @@
             android:layout_marginTop="50dp"
             android:layout_width="268dp"
             android:layout_height="49dp"
-            app:srcCompat="@drawable/googleButton"
+            app:srcCompat="@drawable/googlebutton"
             android:id="@+id/imageButton2"
             android:scaleType="centerCrop"
             android:backgroundTint="@color/white"
@@ -112,7 +106,8 @@
                 android:layout_width="130dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/button2"
-                android:backgroundTint="@android:color/holo_purple" />
+                android:backgroundTint="@android:color/holo_purple"
+                android:onClick="onSave" />
         </LinearLayout>
     </LinearLayout>
 
