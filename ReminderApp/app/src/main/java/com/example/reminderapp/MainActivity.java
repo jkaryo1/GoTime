@@ -13,9 +13,15 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.Spanned;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -32,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private SearchView searchView;
     private EventListAdapter adapter;
+    private TextView nextEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +54,24 @@ public class MainActivity extends AppCompatActivity {
         }
 
 //        this.searchView = (SearchView) findViewById(R.id.event_search);
+        this.nextEvent = (TextView) findViewById(R.id.next_event_time);
+        String base = "Get ready in: ";
+        String openColor = "<font color='#";
+        //noinspection ResourceType
+        String color = getResources().getString(R.color.colorGreen).substring(3);
+        String closeColor = "'>";
+        String time = "15 minutes";
+        String finish = "</font>";
+        String full = base + openColor + color + closeColor + time + finish;
+        this.nextEvent.setText(fromHtml(full));
 
+        this.searchView = (SearchView) findViewById(R.id.event_search);
+        this.searchView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchView.setIconified(false);
+            }
+        });
 
         this.eventArrayList = new ArrayList<>();
         for(int i = 0; i < titles.length; i++){
@@ -120,5 +144,17 @@ public class MainActivity extends AppCompatActivity {
     private void updateUI(){
         this.adapter = new EventListAdapter(this.eventArrayList);
         recyclerView.setAdapter(this.adapter);
+    }
+
+    //From Rackney on StackOverflow
+    @SuppressWarnings("deprecation")
+    public static Spanned fromHtml(String html){
+        Spanned result;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            result = Html.fromHtml(html,Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            result = Html.fromHtml(html);
+        }
+        return result;
     }
 }
