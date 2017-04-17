@@ -45,7 +45,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     public void onSave() {
         EditText e = (EditText) findViewById(R.id.defaultPrepTime);
-        Spinner s = (Spinner) findViewById(R.id.alarmType);
+        Spinner s = (Spinner) findViewById(R.id.alarmTypeSpinner);
         Spinner t = (Spinner) findViewById(R.id.defaultTransportMethod);
 
         SharedPreferences.Editor editor = sharedPref.edit();

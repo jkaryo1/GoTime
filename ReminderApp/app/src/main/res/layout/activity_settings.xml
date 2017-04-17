@@ -52,7 +52,7 @@
         <Spinner
             android:layout_width="match_parent"
             android:entries="@array/alarm"
-            android:id="@+id/alarmType"
+            android:id="@+id/alarmTypeSpinner"
             android:layout_weight="0.25"
             android:layout_height="40dp" />
 
@@ -76,7 +76,7 @@
             android:layout_marginTop="50dp"
             android:layout_width="268dp"
             android:layout_height="49dp"
-            app:srcCompat="@drawable/googlebutton"
+            app:srcCompat="@drawable/google_button"
             android:id="@+id/imageButton2"
             android:scaleType="centerCrop"
             android:backgroundTint="@color/white"
@@ -88,7 +88,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_below="@+id/textView14"
-            android:id="@+id/dayNight"
+            android:id="@+id/dayNightView2"
             android:layout_gravity="center"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
@@ -105,8 +105,9 @@
                 android:layout_marginLeft="50dp"
                 android:layout_width="130dp"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white"
                 android:id="@+id/button2"
-                android:backgroundTint="@android:color/holo_purple"
+                android:backgroundTint="@color/colorPrimary"
                 android:onClick="onSave" />
         </LinearLayout>
     </LinearLayout>
