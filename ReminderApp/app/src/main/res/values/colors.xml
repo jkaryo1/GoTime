@@ -3,7 +3,8 @@
     <color name="colorPrimary">#8e2ee7</color>
     <color name="colorPrimaryDark">#000</color>
     <color name="colorAccent">#FF4081</color>
-
-
+    <color name="colorGreen">#41CB12</color>
+    <color name="darkerCard">#BE86F1</color>
+    <color name="lighterCard">#DABBF7</color>
     <color name="white">#FFFFFF</color>
 </resources>
