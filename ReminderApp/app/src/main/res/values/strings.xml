@@ -8,12 +8,15 @@
     <string name="titleHint">Enter title...</string>
 
     <string name="dateLabel">Event Date</string>
+    <string name="dateHint">Enter date...</string>
 
     <string name="timeLabel">Event Time</string>
+    <string name="timeHint">Enter time...</string>
 
-    <string name="prepTimeLabel">Event Title</string>
+    <string name="prepTimeLabel">Minutes to prepare</string>
+    <string name="prepTimeHint">Enter minutes to prepare</string>
 
-    <string name="transportMethodLabel">Event Title</string>
+    <string name="transportMethodLabel">Transportation Method</string>
 
     <string name="locLabel">Event Location</string>
     <string name="locHint">Enter Location Address...</string>

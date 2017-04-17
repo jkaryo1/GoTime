@@ -16,10 +16,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -66,7 +68,9 @@ public class AddEventActivity extends AppCompatActivity {
         this.titleInput = (EditText) findViewById(R.id.title_input);
         this.prepTimeInput = (EditText) findViewById(R.id.prep_time);
         this.locationInput = (EditText) findViewById(R.id.loc_input);
-        this.transportMethod = (Spinner) findViewById(R.id.transport_spinner);
+        RelativeLayout transportLayout = (RelativeLayout) findViewById(R.id.transport_spinner_view);
+
+        this.transportMethod = (Spinner) transportLayout.findViewById(R.id.transport_spinner);
 
         this.saveButton = (Button) findViewById(R.id.saveButton);
 
@@ -78,7 +82,7 @@ public class AddEventActivity extends AppCompatActivity {
         this.timeView.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
         this.prepTimeInput.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
         this.locationInput.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
-        this.transportMethod.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
+        transportLayout.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
 
         final TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener() {
             @Override
