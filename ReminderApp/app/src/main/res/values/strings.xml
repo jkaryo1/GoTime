@@ -29,4 +29,5 @@
         <item>Driving</item>
         <item>Biking</item>
     </string-array>
+    <string name="search_events">Search Events</string>
 </resources>
