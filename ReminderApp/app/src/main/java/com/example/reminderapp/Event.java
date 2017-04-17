@@ -1,5 +1,7 @@
 package com.example.reminderapp;
 
+import android.util.Log;
+
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -16,9 +18,9 @@ class Event {
     private static final String DATE_FORMAT = "MM/dd/yyyy hh:mm a";
     private static final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
     private static final String JUST_DATE_FORMAT = "MM/dd/yyyy";
-    private static final SimpleDateFormat jdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+    private static final SimpleDateFormat jdf = new SimpleDateFormat(JUST_DATE_FORMAT, Locale.US);
     private static final String TIME_FORMAT = "hh:mm a";
-    private static final SimpleDateFormat tf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+    private static final SimpleDateFormat tf = new SimpleDateFormat(TIME_FORMAT, Locale.US);
 
     Event(String tit, String d, String tim, Integer p, String tra, String l) {
         try {
@@ -65,10 +67,10 @@ class Event {
         return this.title;
     }
     String getDate() {
-        return jdf.format(this.date);
+        return jdf.format(this.date.getTime());
     }
     String getTime() {
-        return tf.format(this.date);
+        return tf.format(this.date.getTime());
     }
     Integer getPrepTime () {
         return this.prepTime;

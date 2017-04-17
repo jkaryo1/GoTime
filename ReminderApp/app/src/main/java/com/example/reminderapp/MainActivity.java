@@ -28,13 +28,13 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private ArrayList<Event> eventArrayList;
-    private String[] titles = {"Event 1", "Event 2", "Event 3"};
-    private String[] dates = {"04/10/2017", "04/11/2017", "04/12/2017"};
-    private String[] times = {"02:23 PM", "11:38 AM", "09:10 PM"};
-    private Integer[] prepTimes = {15, 5, 10};
-    private String[] transports = {"Driving", "Walking", "Biking"};
-    private String[] locations = {"Location 1", "Location 2", "Location 3"};
+    private ArrayList<Object> eventArrayList;
+    private String[] titles = {"Event 1", "Event 2", "Event 4", "Event 3"};
+    private String[] dates = {"04/10/2017", "04/11/2017", "04/11/2017", "04/12/2017"};
+    private String[] times = {"02:23 PM", "11:38 AM", "01:47 PM", "09:10 PM"};
+    private Integer[] prepTimes = {15, 5, 20, 10};
+    private String[] transports = {"Driving", "Walking", "Driving", "Biking"};
+    private String[] locations = {"Location 1", "Location 2", "Location 4", "Location 3"};
     private RecyclerView recyclerView;
     private SearchView searchView;
     private EventListAdapter adapter;
@@ -74,9 +74,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
         this.eventArrayList = new ArrayList<>();
+        int numDays = 0;
         for(int i = 0; i < titles.length; i++){
             Event e = new Event(this.titles[i], this.dates[i], this.times[i], this.prepTimes[i],
                     this.transports[i], this.locations[i]);
+            if (i == 0 || !e.getDate().equals(((Event) this.eventArrayList.get(i + numDays - 1)).getDate())) {
+                this.eventArrayList.add(i + numDays, e.getDate());
+                numDays++;
+            }
             this.eventArrayList.add(e);
         }
         this.recyclerView = (RecyclerView) findViewById(R.id.event_recycler_view);
