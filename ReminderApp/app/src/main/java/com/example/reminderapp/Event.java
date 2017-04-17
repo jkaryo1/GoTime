@@ -10,6 +10,7 @@ import java.util.Locale;
 
 class Event {
 
+    private int id;
     private String title;
     private Calendar date;
     private Integer prepTime;
@@ -24,6 +25,7 @@ class Event {
 
     Event(String tit, String d, String tim, Integer p, String tra, String l) {
         try {
+            this.id = -1;
             this.title = tit;
             this.date = Calendar.getInstance();
             this.date.clear();
@@ -36,7 +38,20 @@ class Event {
         }
     }
 
-    public Event() {}
+    Event(int i, String tit, String d, String tim, Integer p, String tra, String l) {
+        try {
+            this.id = i;
+            this.title = tit;
+            this.date = Calendar.getInstance();
+            this.date.clear();
+            this.date.setTime(sdf.parse(d + " " + tim));
+            this.prepTime = p;
+            this.transport = tra;
+            this.location = l;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public void setTitle(String t) {
         this.title = t;
@@ -80,5 +95,9 @@ class Event {
     }
     String getLocation() {
         return this.location;
+    }
+
+    public int getId() {
+        return this.id;
     }
 }
