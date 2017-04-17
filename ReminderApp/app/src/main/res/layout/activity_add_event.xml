@@ -62,17 +62,18 @@
             android:layout_height="wrap_content"
             android:text="@string/transportMethodLabel"/>
 
-        <!--<Spinner-->
-            <!--android:backgroundTint="@color/colorAccent"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:entries="@array/transportOptions"-->
-            <!--android:id="@+id/transport_spinner" />-->
+
+
+
+
 
         <RelativeLayout
             android:id="@+id/transport_spinner_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_marginBottom="10dp"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:background="@drawable/edit_text_field">
             <Spinner
@@ -80,7 +81,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:entries="@array/transportOptions"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:background="@null"
                 android:minHeight="0dp" />
             <ImageView
