@@ -19,7 +19,7 @@ class Event {
     private static final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
     private static final String JUST_DATE_FORMAT = "MM/dd/yyyy";
     private static final SimpleDateFormat jdf = new SimpleDateFormat(JUST_DATE_FORMAT, Locale.US);
-    private static final String TIME_FORMAT = "hh:mm a";
+    private static final String TIME_FORMAT = "h:mm a";
     private static final SimpleDateFormat tf = new SimpleDateFormat(TIME_FORMAT, Locale.US);
 
     Event(String tit, String d, String tim, Integer p, String tra, String l) {

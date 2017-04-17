@@ -1,5 +1,8 @@
 package com.example.reminderapp;
 
+import android.content.Context;
+import android.graphics.PorterDuff;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,11 +17,14 @@ import java.util.Locale;
 class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<Object> eventList;
-
     private final int EVENT = 0, DIVIDER = 1;
+    private Context context;
+    private int colors[];
 
-    EventListAdapter(ArrayList<Object> list) {
+    EventListAdapter(ArrayList<Object> list, Context c) {
         this.eventList = list;
+        this.colors = new int[this.eventList.size()];
+        this.context = c;
     }
 
     @Override
@@ -44,7 +50,7 @@ class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         switch (holder.getItemViewType()) {
             case EVENT:
                 LessonHolder vh1 = (LessonHolder) holder;
-                vh1.bindData((Event) eventList.get(position));
+                vh1.bindData(position);
                 break;
             case DIVIDER: default:
                 DividerHolder vh2 = (DividerHolder) holder;
@@ -68,14 +74,16 @@ class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         return -1;
     }
 
-    class LessonHolder extends RecyclerView.ViewHolder {
+    private class LessonHolder extends RecyclerView.ViewHolder {
         private Event event;
         TextView eventTitle;
         TextView eventLocation;
         TextView eventTime;
+        View cardView;
 
         LessonHolder(View itemView) {
             super(itemView);
+            cardView = itemView;
             eventTitle = (TextView) itemView.findViewById(R.id.event_title);
             eventLocation = (TextView) itemView.findViewById(R.id.event_location);
             eventTime = (TextView) itemView.findViewById(R.id.event_time);
@@ -96,17 +104,31 @@ class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //            });
         }
 
-        void bindData(Event e) {
-            event = e;
-            eventTitle.setText(e.getTitle());
+        void bindData(int position) {
+            event = (Event) eventList.get(position);
+            eventTitle.setText(event.getTitle());
 //            Time time = event.getTime();
 //            SimpleDateFormat format = new SimpleDateFormat("HH:mm a", Locale.getDefault());
 //            String timeString = format.format(time);
-            eventTime.setText(e.getTime());
-            eventLocation.setText(e.getLocation());
+            eventTime.setText(event.getTime());
+            eventLocation.setText(event.getLocation());
+            if (colors[position] == 0) {
+                if (position == 1) {
+                    colors[position] = 1;
+                } else if (colors[position - 1] == 0) {
+                    colors[position] = (colors[position - 2] % 2) + 1;
+                } else {
+                    colors[position] = colors[position - 1];
+                }
+            }
+            if (colors[position] == 1) {
+                cardView.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.darkerCard), PorterDuff.Mode.SRC_IN);
+            } else {
+                cardView.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.lighterCard), PorterDuff.Mode.SRC_IN);
+            }
         }
     }
-    class DividerHolder extends RecyclerView.ViewHolder {
+    private class DividerHolder extends RecyclerView.ViewHolder {
 
         TextView newDay;
 

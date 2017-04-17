@@ -29,12 +29,12 @@ public class MainActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private ArrayList<Object> eventArrayList;
-    private String[] titles = {"Event 1", "Event 2", "Event 4", "Event 3"};
-    private String[] dates = {"04/10/2017", "04/11/2017", "04/11/2017", "04/12/2017"};
-    private String[] times = {"02:23 PM", "11:38 AM", "01:47 PM", "09:10 PM"};
-    private Integer[] prepTimes = {15, 5, 20, 10};
-    private String[] transports = {"Driving", "Walking", "Driving", "Biking"};
-    private String[] locations = {"Location 1", "Location 2", "Location 4", "Location 3"};
+    private String[] titles = {"Event 1", "Event 2", "Event 3", "Event 4", "Event 5", "Event 6", "Event 7", "Event 8"};
+    private String[] dates = {"04/10/2017", "04/11/2017", "04/11/2017", "04/12/2017", "04/12/2017", "04/12/2017", "04/14/2017", "04/18/2017"};
+    private String[] times = {"02:23 PM", "11:38 AM", "01:47 PM", "09:10 AM", "12:02 PM", "03:52 PM", "10:20 AM", "05:35 PM"};
+    private Integer[] prepTimes = {15, 5, 20, 10, 30, 35, 5, 15};
+    private String[] transports = {"Driving", "Walking", "Driving", "Biking", "Walking", "Biking", "Driving", "Biking"};
+    private String[] locations = {"Location 1", "Location 2", "Location 3", "Location 4", "Location 5", "Location 6", "Location 7", "Location 8"};
     private RecyclerView recyclerView;
     private SearchView searchView;
     private EventListAdapter adapter;
@@ -101,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         MenuItem newEvent = menu.findItem(R.id.new_event_button);
-        Drawable plus = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_plus, null);
+        Drawable plus = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_input_add, null);
         if (plus != null) {
             plus.setColorFilter(ContextCompat.getColor(MainActivity.this, R.color.white), PorterDuff.Mode.SRC_IN);
         }
@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateUI(){
-        this.adapter = new EventListAdapter(this.eventArrayList);
+        this.adapter = new EventListAdapter(this.eventArrayList, getApplicationContext());
         recyclerView.setAdapter(this.adapter);
     }
 
