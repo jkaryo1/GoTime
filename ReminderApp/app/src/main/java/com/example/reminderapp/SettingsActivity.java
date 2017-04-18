@@ -164,7 +164,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.transition.enter, R.transition.stack);
+        overridePendingTransition(R.transition.unstack, R.transition.exit);
     }
 
     // Dismiss keyboard, control cursor behavior

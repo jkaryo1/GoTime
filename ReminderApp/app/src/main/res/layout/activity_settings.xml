@@ -26,7 +26,7 @@
             style="@style/EditTextRounded"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
+            android:inputType="number|none"
             android:id="@+id/default_prep_time"
             android:cursorVisible="false"
             android:focusable="true"

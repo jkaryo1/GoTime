@@ -105,14 +105,12 @@ public class MainActivity extends AppCompatActivity {
         }
         newEvent.setIcon(plus);
 
-//        MenuItem settings = menu.findItem(R.id.action_settings);
+        MenuItem settingsButton = menu.findItem(R.id.action_settings);
         Drawable gear = ResourcesCompat.getDrawable(getResources(), R.drawable.ic_settings_icon, null);
         if (gear != null) {
             gear.setColorFilter(ContextCompat.getColor(MainActivity.this, R.color.white), PorterDuff.Mode.SRC_IN);
         }
-//        settings.setIcon(gear);
-
-        toolbar.setNavigationIcon(gear);
+        settingsButton.setIcon(gear);
 
         return true;
     }
@@ -126,10 +124,10 @@ public class MainActivity extends AppCompatActivity {
         Intent intent;
 
         switch (item.getItemId()) {
-            case android.R.id.home:
+            case R.id.action_settings:
                 intent = new Intent(this, SettingsActivity.class);
                 startActivity(intent);
-                overridePendingTransition(R.transition.unstack, R.transition.exit);
+                overridePendingTransition(R.transition.enter, R.transition.stack);
                 return true;
 
             case R.id.new_event_button:

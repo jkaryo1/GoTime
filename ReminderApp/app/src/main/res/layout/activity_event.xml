@@ -8,139 +8,160 @@
 
     <include layout="@layout/app_bar"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <ScrollView
         android:layout_height="match_parent"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingStart="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingEnd="@dimen/activity_horizontal_margin"
-        android:paddingBottom="@dimen/activity_horizontal_margin"
-        android:paddingTop="5dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/titleLabel"/>
-
-        <EditText
-            style="@style/EditTextRounded"
-            android:id="@+id/title_input"
-            android:hint="@string/titleHint"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/dateLabel" />
-
-        <EditText
-            style="@style/EditTextRounded"
-            android:id="@+id/date"
-            android:focusableInTouchMode="false"
-            android:hint="@string/dateHint" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/timeLabel" />
-
-        <EditText
-            style="@style/EditTextRounded"
-            android:id="@+id/time"
-            android:focusableInTouchMode="false"
-            android:hint="@string/timeHint" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/prepTimeLabel" />
-
-        <EditText
-            android:id="@+id/prep_time"
-            style="@style/EditTextRounded"
-            android:inputType="numberDecimal"
-            android:hint="@string/prepTimeHint" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/transportMethodLabel"/>
-
-
-
-
-
-
-        <RelativeLayout
-            android:id="@+id/transport_spinner_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:layout_marginBottom="5dp"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:background="@drawable/edit_text_field">
-            <Spinner
-                android:id="@+id/transport_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:entries="@array/transportOptions"
-                android:textSize="14sp"
-                android:background="@null"
-                android:minHeight="0dp" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
-                android:src="@drawable/ic_down_arrow" />
-        </RelativeLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/locLabel" />
-
-        <EditText
-            android:id="@+id/loc_input"
-            style="@style/EditTextRounded"
-            android:hint="@string/locHint" />
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="155dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:src="@drawable/hopkins_map"/>
+        android:layout_width="match_parent">
 
         <LinearLayout
-            android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingStart="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingEnd="@dimen/activity_horizontal_margin"
+            android:paddingBottom="@dimen/activity_horizontal_margin"
+            android:paddingTop="5dp"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusableInTouchMode="true">
 
-            <Button
-                style="@style/ButtonStyle"
-                android:id="@+id/cancel_button"
-                android:layout_weight="1"
-                android:text="@string/cancelButton"
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:text="@string/titleLabel"/>
 
-            <Button
-                style="@style/ButtonStyle"
-                android:id="@+id/save_button"
-                android:layout_weight="1"
-                android:text="@string/saveButton"
+            <EditText
+                style="@style/EditTextRounded"
+                android:id="@+id/title_input"
+                android:hint="@string/titleHint"
+                android:inputType="text"
+                android:maxLines="1"
+                android:cursorVisible="false"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:longClickable="false"
+                android:imeOptions="actionDone"/>
+
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="match_parent"
+                android:text="@string/dateLabel" />
+
+            <EditText
+                style="@style/EditTextRounded"
+                android:id="@+id/date"
+                android:focusableInTouchMode="false"
+                android:hint="@string/dateHint" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/timeLabel" />
+
+            <EditText
+                style="@style/EditTextRounded"
+                android:id="@+id/time"
+                android:focusableInTouchMode="false"
+                android:hint="@string/timeHint" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/prepTimeLabel" />
+
+            <EditText
+                android:id="@+id/prep_time"
+                style="@style/EditTextRounded"
+                android:inputType="number|none"
+                android:hint="@string/prepTimeHint"
+                android:maxLines="1"
+                android:cursorVisible="false"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:longClickable="false"
+                android:imeOptions="actionDone" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/transportMethodLabel"/>
+
+            <RelativeLayout
+                android:id="@+id/transport_spinner_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:layout_marginBottom="5dp"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingEnd="@dimen/activity_horizontal_margin"
+                android:paddingLeft="0dp"
+                android:paddingStart="0dp"
+                android:background="@drawable/edit_text_field">
+                <Spinner
+                    android:id="@+id/transport_spinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:entries="@array/transportOptions"
+                    android:background="@null"
+                    android:minHeight="0dp" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/ic_down_arrow"
+                    android:contentDescription="@string/down_arrow" />
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/locLabel" />
+
+            <EditText
+                android:id="@+id/loc_input"
+                style="@style/EditTextRounded"
+                android:hint="@string/locHint"
+                android:inputType="text"
+                android:maxLines="1"
+                android:cursorVisible="false"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:longClickable="false"
+                android:imeOptions="actionDone" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="155dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:src="@drawable/hopkins_map"
+                android:contentDescription="@string/down_arrow" />
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    style="@style/ButtonStyle"
+                    android:id="@+id/cancel_button"
+                    android:layout_weight="1"
+                    android:text="@string/cancelButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <Button
+                    style="@style/ButtonStyle"
+                    android:id="@+id/save_button"
+                    android:layout_weight="1"
+                    android:text="@string/saveButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
         </LinearLayout>
-
-
-
-    </LinearLayout>
-
-
-
-
+    </ScrollView>
 </LinearLayout>

@@ -20,9 +20,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -98,6 +101,9 @@ public class EventActivity extends AppCompatActivity {
         this.prepTimeInput.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
         this.locationInput.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
         transportLayout.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
+        setListeners(this.titleInput);
+        setListeners(this.prepTimeInput);
+        setListeners(this.locationInput);
 
         Intent intent = getIntent();
         this.isExistingEvent = intent.getBooleanExtra("EXISTING_EVENT", false);
@@ -263,7 +269,9 @@ public class EventActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main, menu);
         MenuItem plusItem = menu.findItem(R.id.new_event_button);
         MenuItem trashItem = menu.findItem(R.id.delete_event_button);
+        MenuItem settingsItem = menu.findItem(R.id.action_settings);
 
+        settingsItem.setVisible(false);
         plusItem.setVisible(false);
         if (this.isExistingEvent) {
             trashItem.setVisible(true);
@@ -311,6 +319,46 @@ public class EventActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setListeners(final EditText et) {
+        et.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                et.setCursorVisible(true);
+            }
+        });
+        et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    et.performClick();
+                } else {
+                    hideKeyboard(v, et);
+                    et.clearFocus();
+                }
+            }
+        });
+        et.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (v.getId() == et.getId()) {
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        hideKeyboard(v, et);
+                    }
+                }
+                return false;
+            }
+        });
+    }
+
+    // Dismiss keyboard, control cursor behavior
+    public void hideKeyboard(View v, EditText et) {
+        et.setCursorVisible(false);
+        et.clearFocus();
+
+        final InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
     @Override

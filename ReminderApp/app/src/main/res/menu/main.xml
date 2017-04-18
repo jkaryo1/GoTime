@@ -4,16 +4,23 @@
 
     <item
         android:id="@+id/new_event_button"
-        android:orderInCategory="300"
+        android:orderInCategory="1"
         android:title="@string/add_event"
         android:icon="@drawable/ic_plus"
         app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/delete_event_button"
-        android:orderInCategory="300"
+        android:orderInCategory="2"
         android:title="@string/delete_event"
         android:icon="@drawable/ic_trash_can_icon"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="3"
+        android:title="@string/action_settings"
+        android:icon="@drawable/ic_settings_icon"
         app:showAsAction="ifRoom"/>
 
 </menu>
