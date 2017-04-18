@@ -5,13 +5,13 @@
 
     <!--Strings for Event add/edit fragment-->
     <string name="titleLabel">Event Title</string>
-    <string name="titleHint">Enter title...</string>
+    <string name="titleHint">Enter title…</string>
 
     <string name="dateLabel">Event Date</string>
-    <string name="dateHint">Enter date...</string>
+    <string name="dateHint">Enter date…</string>
 
     <string name="timeLabel">Event Time</string>
-    <string name="timeHint">Enter time...</string>
+    <string name="timeHint">Enter time…</string>
 
     <string name="prepTimeLabel">Minutes to prepare</string>
     <string name="prepTimeHint">Enter minutes to prepare</string>
@@ -19,7 +19,7 @@
     <string name="transportMethodLabel">Transportation Method</string>
 
     <string name="locLabel">Event Location</string>
-    <string name="locHint">Enter Location Address...</string>
+    <string name="locHint">Enter Location Address…</string>
 
     <string name="cancelButton">Cancel</string>
     <string name="saveButton">Save</string>
@@ -30,21 +30,14 @@
         <item>Biking</item>
     </string-array>
     <string name="search_events">Search Events</string>
-    <string-array name="travelMethod">
-        <item>Walking</item>
-        <item>Biking</item>
-        <item>Driving</item>
-    </string-array>
     <string-array name="alarm">
         <item>Alarm Sound #1</item>
         <item>Alarm Sound #2</item>
         <item>Alarm Sound #3</item>
     </string-array>
-    <string name="preference_file_key">com.example.reminderapp.PREFERENCE_FILE_KEY</string>
-    <string name="prep_time">15 minutes</string>
-    <string name="alarm_type">Alarm Sound #1</string>
-    <string name="transport_method">Walking</string>
     <string name="default_preptime_label">Default Preparation Time (Minutes)</string>
     <string name="alarm_type_label">Alarm Type</string>
     <string name="default_transportmethod_label">Default Transportation Method</string>
+    <string name="down_arrow">Down arrow</string>
+    <string name="google_authentication">Google Authentication</string>
 </resources>
