@@ -29,7 +29,7 @@
 
     <style name="EditTextRounded">
         <item name="android:background">@drawable/edit_text_field</item>
-        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
         <item name="android:paddingBottom">3dp</item>
         <item name="android:paddingTop">3dp</item>
         <item name="android:paddingLeft">8dp</item>
@@ -40,7 +40,7 @@
 
     <style name="TextViewStyle">
         <item name="android:paddingLeft">7dp</item>
-        <item name="android:textSize">20sp</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
     </style>
 
