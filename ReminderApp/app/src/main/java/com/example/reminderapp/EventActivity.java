@@ -4,9 +4,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
@@ -14,6 +16,7 @@ import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -27,6 +30,7 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 public class EventActivity extends AppCompatActivity {
     private Toolbar toolbar;
@@ -34,6 +38,7 @@ public class EventActivity extends AppCompatActivity {
     private EditText dateView;
     private EditText timeView;
     private Button saveButton;
+    private Button cancelButton;
     private EditText titleInput;
     private EditText prepTimeInput;
     private EditText locationInput;
@@ -80,6 +85,9 @@ public class EventActivity extends AppCompatActivity {
         this.transportMethod = (Spinner) transportLayout.findViewById(R.id.transport_spinner);
 
         this.saveButton = (Button) findViewById(R.id.save_button);
+        this.cancelButton = (Button) findViewById(R.id.cancel_button);
+
+        final Activity activity = this;
 
 
         this.saveButton.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
@@ -170,6 +178,83 @@ public class EventActivity extends AppCompatActivity {
 
             }
         });
+
+
+        this.saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Drawable icon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_menu_save, null);
+                if (icon != null) {
+                    icon.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+                }
+                // Create confirmation dialog
+                // On confirm, save settings, update prefs, and create Toast
+                if(isExistingEvent) {
+                    new AlertDialog.Builder(activity).setTitle("Update Event")
+                            .setMessage("Are you sure you want to update event?")
+                            .setIcon(icon)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    finish();
+                                    overridePendingTransition(R.transition.unstack, R.transition.exit);
+                                    Toast.makeText(getApplicationContext(), "Event Updated", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, null).show();
+                } else {
+                    new AlertDialog.Builder(activity).setTitle("Add Event")
+                            .setMessage("Are you sure you want to save event?")
+                            .setIcon(icon)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    finish();
+                                    overridePendingTransition(R.transition.unstack, R.transition.exit);
+                                    Toast.makeText(getApplicationContext(), "Event Saved", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, null).show();
+                }
+
+            }
+        });
+
+        this.cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Drawable icon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_dialog_alert, null);
+                if (icon != null) {
+                    icon.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+                }
+                // Create confirmation dialog
+                // On confirm, revert changes and create Toast
+                if (isExistingEvent) {
+                    new AlertDialog.Builder(activity).setTitle("Cancel Changes")
+                            .setMessage("Are you sure you want to cancel changes?")
+                            .setIcon(icon)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    finish();
+                                    overridePendingTransition(R.transition.unstack, R.transition.exit);
+                                    Toast.makeText(activity, "Changes Cancelled", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, null).show();
+                } else {
+                    new AlertDialog.Builder(activity).setTitle("Cancel New Event")
+                            .setMessage("Are you sure you want to cancel adding event?")
+                            .setIcon(icon)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    finish();
+                                    overridePendingTransition(R.transition.unstack, R.transition.exit);
+                                    Toast.makeText(activity, "New Event Cancelled", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, null).show();
+                }
+
+            }
+        });
     }
 
     @Override
@@ -205,6 +290,22 @@ public class EventActivity extends AppCompatActivity {
         switch (item.getItemId()) {
 
             case R.id.delete_event_button:
+                Drawable icon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_delete, null);
+                if (icon != null) {
+                    icon.setColorFilter(ContextCompat.getColor(this, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+                }
+
+                new AlertDialog.Builder(this).setTitle("Delete Event")
+                        .setMessage("Are you sure you want to delete event?")
+                        .setIcon(icon)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                finish();
+                                overridePendingTransition(R.transition.unstack, R.transition.exit);
+                                Toast.makeText(getApplicationContext(), "Event Deleted", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, null).show();
                 return true;
 
         }

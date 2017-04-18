@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_settings"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:clickable="true"
+    android:focusableInTouchMode="true">
 
     <include layout="@layout/app_bar"/>
 
@@ -26,7 +27,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="numberDecimal"
-            android:id="@+id/default_prep_time" />
+            android:id="@+id/default_prep_time"
+            android:cursorVisible="false"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:longClickable="false"
+            android:imeOptions="actionDone" />
 
         <TextView
             android:text="@string/alarm_type_label"
@@ -41,6 +47,9 @@
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
             android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingEnd="@dimen/activity_horizontal_margin"
+            android:paddingLeft="0dp"
+            android:paddingStart="0dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/edit_text_field">
             <Spinner
@@ -56,6 +65,8 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:contentDescription="@string/down_arrow"
                 android:src="@drawable/ic_down_arrow" />
         </RelativeLayout>
 
@@ -74,6 +85,9 @@
             android:paddingBottom="5dp"
             android:layout_marginBottom="10dp"
             android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingEnd="@dimen/activity_horizontal_margin"
+            android:paddingStart="0dp"
+            android:paddingLeft="0dp"
             android:background="@drawable/edit_text_field">
             <Spinner
                 android:id="@+id/transport_spinner"
@@ -87,7 +101,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
+                android:contentDescription="@string/down_arrow"
                 android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
                 android:src="@drawable/ic_down_arrow" />
         </RelativeLayout>
 
@@ -100,35 +116,28 @@
             app:srcCompat="@drawable/google_button"
             android:id="@+id/imageButton2"
             android:scaleType="centerCrop"
-            android:backgroundTint="@color/white"
-            android:layout_marginBottom="70dp"
-            android:elevation="0dp" />
+            android:contentDescription="@string/google_authentication"
+            android:background="@color/white"
+            android:layout_marginBottom="70dp" />
 
         <LinearLayout
-            android:layout_width="313dp"
-            android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_below="@+id/textView14"
-            android:id="@+id/dayNightView2"
-            android:layout_gravity="center"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="13dp">
-
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
             <Button
-                android:text="CANCEL"
-                android:layout_height="wrap_content"
+                style="@style/ButtonStyle"
                 android:id="@+id/cancel_button"
-                android:layout_width="130dp" />
-
+                android:layout_weight="1"
+                android:text="@string/cancelButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
             <Button
-                android:text="SAVE"
-                android:layout_marginLeft="50dp"
-                android:layout_width="130dp"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
+                style="@style/ButtonStyle"
                 android:id="@+id/save_button"
-                android:backgroundTint="@color/colorPrimary" />
+                android:layout_weight="1"
+                android:text="@string/saveButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
         </LinearLayout>
 
 
