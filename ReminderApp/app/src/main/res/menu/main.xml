@@ -8,4 +8,12 @@
         android:title="@string/add_event"
         android:icon="@drawable/ic_plus"
         app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/delete_event_button"
+        android:orderInCategory="300"
+        android:title="@string/delete_event"
+        android:icon="@drawable/ic_trash_can_icon"
+        app:showAsAction="ifRoom"/>
+
 </menu>

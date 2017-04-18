@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
+
 //        this.searchView = (SearchView) findViewById(R.id.event_search);
         this.nextEvent = (TextView) findViewById(R.id.next_event_time);
         String base = "Get ready in: ";
@@ -90,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         //Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem item = menu.findItem(R.id.delete_event_button);
+        item.setVisible(false);
         return true;
     }
     @Override
@@ -110,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
 //        settings.setIcon(gear);
 
         toolbar.setNavigationIcon(gear);
-
 
         return true;
     }

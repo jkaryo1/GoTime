@@ -111,7 +111,7 @@
 
             <Button
                 style="@style/ButtonStyle"
-                android:id="@+id/cancelButton"
+                android:id="@+id/cancel_button"
                 android:layout_weight="1"
                 android:text="@string/cancelButton"
                 android:layout_width="match_parent"
@@ -119,13 +119,11 @@
 
             <Button
                 style="@style/ButtonStyle"
-                android:id="@+id/saveButton"
+                android:id="@+id/save_button"
                 android:layout_weight="1"
                 android:text="@string/saveButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
-
-
 
         </LinearLayout>
 

@@ -10,11 +10,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -64,8 +68,6 @@ public class EventActivity extends AppCompatActivity {
 
         /*Change Toolbar title to match activity*/
         title = (TextView) findViewById(R.id.title);
-        title.setText(R.string.add_event);
-
 
         /*datePicker setup*/
         this.dateView = (EditText) findViewById(R.id.date);
@@ -77,7 +79,7 @@ public class EventActivity extends AppCompatActivity {
 
         this.transportMethod = (Spinner) transportLayout.findViewById(R.id.transport_spinner);
 
-        this.saveButton = (Button) findViewById(R.id.saveButton);
+        this.saveButton = (Button) findViewById(R.id.save_button);
 
 
         this.saveButton.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
@@ -92,6 +94,7 @@ public class EventActivity extends AppCompatActivity {
         Intent intent = getIntent();
         this.isExistingEvent = intent.getBooleanExtra("EXISTING_EVENT", false);
         if (this.isExistingEvent) {
+            title.setText(R.string.edit_event);
             int id = intent.getIntExtra("ID", -1);
             String title = intent.getStringExtra("TITLE");
             long dateMillis = intent.getLongExtra("DATE", 0);
@@ -118,6 +121,7 @@ public class EventActivity extends AppCompatActivity {
         } else {
             int prepTime = sharedPref.getInt("PREP_TIME", 15);
             int transportType = sharedPref.getInt("TRANSPORT_TYPE", 0);
+            title.setText(R.string.add_event);
             this.prepTimeInput.setText(String.valueOf(prepTime));
             this.transportMethod.setSelection(transportType);
         }
@@ -166,6 +170,46 @@ public class EventActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        //Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem plusItem = menu.findItem(R.id.new_event_button);
+        MenuItem trashItem = menu.findItem(R.id.delete_event_button);
+
+        plusItem.setVisible(false);
+        if (this.isExistingEvent) {
+            trashItem.setVisible(true);
+        } else {
+            trashItem.setVisible(false);
+        }
+
+        return true;
+    }
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        Intent intent;
+
+        switch (item.getItemId()) {
+
+            case R.id.delete_event_button:
+                return true;
+
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
