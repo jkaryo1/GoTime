@@ -5,7 +5,9 @@
     <color name="colorAccent">#8E2EE7</color>
     <color name="gray">#F0F0F0</color>
     <color name="colorGreen">#41CB12</color>
-    <color name="darkerCard">#BE86F1</color>
-    <color name="lighterCard">#DABBF7</color>
+    <color name="darkerCard">#ABA9F5</color>
+    <color name="lighterCard">#F5A9F4</color>
     <color name="white">#FFFFFF</color>
+
+
 </resources>
