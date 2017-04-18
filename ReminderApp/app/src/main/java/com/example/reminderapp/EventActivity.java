@@ -1,22 +1,20 @@
 package com.example.reminderapp;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.res.Resources;
-import android.graphics.ColorFilter;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
-import android.net.Uri;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -26,7 +24,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-public class AddEventActivity extends AppCompatActivity {
+public class EventActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView title;
     private EditText dateView;
@@ -36,6 +34,10 @@ public class AddEventActivity extends AppCompatActivity {
     private EditText prepTimeInput;
     private EditText locationInput;
     private Spinner transportMethod;
+
+    private boolean isExistingEvent;
+    private Event event;
+    private SharedPreferences sharedPref;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -45,7 +47,10 @@ public class AddEventActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_event);
+        setContentView(R.layout.activity_event);
+
+        Context context = EventActivity.this;
+        this.sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 
         final Calendar myCalendar = Calendar.getInstance();
 
@@ -83,6 +88,39 @@ public class AddEventActivity extends AppCompatActivity {
         this.prepTimeInput.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
         this.locationInput.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
         transportLayout.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
+
+        Intent intent = getIntent();
+        this.isExistingEvent = intent.getBooleanExtra("EXISTING_EVENT", false);
+        if (this.isExistingEvent) {
+            int id = intent.getIntExtra("ID", -1);
+            String title = intent.getStringExtra("TITLE");
+            long dateMillis = intent.getLongExtra("DATE", 0);
+            int prepTime = intent.getIntExtra("PREP_TIME", 0);
+            String transport = intent.getStringExtra("TRANSPORT");
+            String location = intent.getStringExtra("LOCATION");
+            this.event = new Event(id, title, dateMillis, prepTime, transport, location);
+            this.titleInput.setText(this.event.title);
+            this.dateView.setText(this.event.getDate());
+            this.timeView.setText(this.event.getTime());
+            this.prepTimeInput.setText(String.valueOf(this.event.prepTime));
+            this.locationInput.setText(this.event.location);
+            switch (this.event.transport) {
+                case "Driving":
+                    this.transportMethod.setSelection(1);
+                    break;
+                case "Biking":
+                    this.transportMethod.setSelection(2);
+                    break;
+                case "Walking": default:
+                    this.transportMethod.setSelection(0);
+                    break;
+            }
+        } else {
+            int prepTime = sharedPref.getInt("PREP_TIME", 15);
+            int transportType = sharedPref.getInt("TRANSPORT_TYPE", 0);
+            this.prepTimeInput.setText(String.valueOf(prepTime));
+            this.transportMethod.setSelection(transportType);
+        }
 
         final TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener() {
             @Override

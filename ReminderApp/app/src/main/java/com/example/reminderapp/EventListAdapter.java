@@ -1,18 +1,16 @@
 package com.example.reminderapp;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import java.sql.Time;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 
 class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -21,6 +19,7 @@ class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
     private int colors[];
 
+    // Set array and context, and initialize colors array
     EventListAdapter(ArrayList<Object> list, Context c) {
         this.eventList = list;
         this.colors = new int[this.eventList.size()];
@@ -31,7 +30,7 @@ class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder viewHolder;
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-
+        //ViewHolder depends on if card or new date
         switch (viewType) {
             case EVENT:
                 View v1 = inflater.inflate(R.layout.single_event, parent, false);
@@ -47,6 +46,7 @@ class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        //Bind data specific to correct ViewHolder
         switch (holder.getItemViewType()) {
             case EVENT:
                 LessonHolder vh1 = (LessonHolder) holder;
@@ -81,37 +81,37 @@ class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView eventTime;
         View cardView;
 
+        // Initialize card views
         LessonHolder(View itemView) {
             super(itemView);
             cardView = itemView;
             eventTitle = (TextView) itemView.findViewById(R.id.event_title);
             eventLocation = (TextView) itemView.findViewById(R.id.event_location);
             eventTime = (TextView) itemView.findViewById(R.id.event_time);
-
-//            itemView.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    Intent intent = new Intent(this, ViewEventActivity.class);
-//                    intent.putExtra("TITLE", event.getTitle());
-//                    intent.putExtra("DATE", event.getDate());
-//                    intent.putExtra("TIME", event.getTime());
-//                    intent.putExtra("PREP_TIME", event.getPrepTime());
-//                    intent.putExtra("TRANSPORT", event.getTransport());
-//                    intent.putExtra("LOCATION", event.getLocation());
-//                    context.startActivity(intent);
-//                    ((Activity) context).overridePendingTransition(R.transition.enter, R.transition.stack);
-//                }
-//            });
+            cardView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(context, EventActivity.class);
+                    intent.putExtra("EXISTING_EVENT", true);
+                    intent.putExtra("ID", event.id);
+                    intent.putExtra("TITLE", event.title);
+                    intent.putExtra("DATE", event.date.getTimeInMillis());
+                    intent.putExtra("PREP_TIME", event.prepTime);
+                    intent.putExtra("TRANSPORT", event.transport);
+                    intent.putExtra("LOCATION", event.location);
+                    context.startActivity(intent);
+                    ((Activity) context).overridePendingTransition(R.transition.enter, R.transition.stack);
+                }
+            });
         }
 
+        //Set values of views, also create event associated with each card
+        //and populate colors array to ensure alternating colors by day
         void bindData(int position) {
             event = (Event) eventList.get(position);
-            eventTitle.setText(event.getTitle());
-//            Time time = event.getTime();
-//            SimpleDateFormat format = new SimpleDateFormat("HH:mm a", Locale.getDefault());
-//            String timeString = format.format(time);
+            eventTitle.setText(event.title);
             eventTime.setText(event.getTime());
-            eventLocation.setText(event.getLocation());
+            eventLocation.setText(event.location);
             if (colors[position] == 0) {
                 if (position == 1) {
                     colors[position] = 1;
@@ -139,10 +139,6 @@ class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         void bindData(String day) {
             newDay.setText(day);
-            Log.d("TAG", day);
-//            Time time = event.getTime();
-//            SimpleDateFormat format = new SimpleDateFormat("HH:mm a", Locale.getDefault());
-//            String timeString = format.format(time);
         }
     }
 
