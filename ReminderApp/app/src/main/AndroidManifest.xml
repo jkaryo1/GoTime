@@ -5,6 +5,7 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -18,7 +19,7 @@
         <activity android:name=".SettingsActivity"
             android:theme="@style/AddEventTheme"/>
         <activity android:name=".EventActivity"
-            android:theme="@style/AddEventTheme"></activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+            android:theme="@style/AddEventTheme"/><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data
             android:name="com.google.android.gms.version"
