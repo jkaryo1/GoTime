@@ -11,18 +11,25 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".SplashActivity"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"/>
-        <activity android:name=".SettingsActivity"
-            android:theme="@style/AddEventTheme"/>
-        <activity android:name=".EventActivity"
-            android:theme="@style/AddEventTheme"/><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".SettingsActivity"
+            android:theme="@style/AddEventTheme"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".EventActivity"
+            android:theme="@style/AddEventTheme"
+            android:screenOrientation="portrait"/><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
      App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
         <meta-data
             android:name="com.google.android.gms.version"
