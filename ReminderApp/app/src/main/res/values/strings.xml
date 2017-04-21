@@ -42,4 +42,10 @@
     <string name="delete_event">Delete Event</string>
     <string name="down_arrow">Down arrow</string>
     <string name="google_authentication">Google Authentication</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="update">Update</string>
+    <string name="delete">Delete</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

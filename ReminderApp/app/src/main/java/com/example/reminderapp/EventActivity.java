@@ -204,26 +204,26 @@ public class EventActivity extends AppCompatActivity {
                     new AlertDialog.Builder(activity).setTitle("Update Event")
                             .setMessage("Are you sure you want to update event?")
                             .setIcon(icon)
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     finish();
                                     overridePendingTransition(R.transition.unstack, R.transition.exit);
                                     Toast.makeText(getApplicationContext(), "Event Updated", Toast.LENGTH_SHORT).show();
                                 }
                             })
-                            .setNegativeButton(android.R.string.no, null).show();
+                            .setNegativeButton(R.string.cancel, null).show();
                 } else {
                     new AlertDialog.Builder(activity).setTitle("Add Event")
                             .setMessage("Are you sure you want to save event?")
                             .setIcon(icon)
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     finish();
                                     overridePendingTransition(R.transition.unstack, R.transition.exit);
                                     Toast.makeText(getApplicationContext(), "Event Saved", Toast.LENGTH_SHORT).show();
                                 }
                             })
-                            .setNegativeButton(android.R.string.no, null).show();
+                            .setNegativeButton(R.string.cancel, null).show();
                 }
 
             }
@@ -242,26 +242,26 @@ public class EventActivity extends AppCompatActivity {
                     new AlertDialog.Builder(activity).setTitle("Cancel Changes")
                             .setMessage("Are you sure you want to cancel changes?")
                             .setIcon(icon)
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     finish();
                                     overridePendingTransition(R.transition.unstack, R.transition.exit);
                                     Toast.makeText(activity, "Changes Cancelled", Toast.LENGTH_SHORT).show();
                                 }
                             })
-                            .setNegativeButton(android.R.string.no, null).show();
+                            .setNegativeButton(R.string.no, null).show();
                 } else {
                     new AlertDialog.Builder(activity).setTitle("Cancel New Event")
                             .setMessage("Are you sure you want to cancel adding event?")
                             .setIcon(icon)
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
                                     finish();
                                     overridePendingTransition(R.transition.unstack, R.transition.exit);
                                     Toast.makeText(activity, "New Event Cancelled", Toast.LENGTH_SHORT).show();
                                 }
                             })
-                            .setNegativeButton(android.R.string.no, null).show();
+                            .setNegativeButton(R.string.no, null).show();
                 }
 
             }
@@ -311,14 +311,14 @@ public class EventActivity extends AppCompatActivity {
                 new AlertDialog.Builder(this).setTitle("Delete Event")
                         .setMessage("Are you sure you want to delete event?")
                         .setIcon(icon)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 finish();
                                 overridePendingTransition(R.transition.unstack, R.transition.exit);
                                 Toast.makeText(getApplicationContext(), "Event Deleted", Toast.LENGTH_SHORT).show();
                             }
                         })
-                        .setNegativeButton(android.R.string.no, null).show();
+                        .setNegativeButton(R.string.cancel, null).show();
                 return true;
 
         }
