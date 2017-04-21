@@ -143,12 +143,15 @@ public class EventActivity extends AppCompatActivity {
         final TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                myCalendar.set(Calendar.HOUR, hourOfDay);
-                myCalendar.set(Calendar.MINUTE, minute);
+                Calendar myCal = Calendar.getInstance();
 
-                String myFormat = "hh:mm a"; //In which you need put here
+                myCal.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                myCal.set(Calendar.MINUTE, minute);
+
+                String myFormat = "h:mm a"; //In which you need put here
                 SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-                timeView.setText(sdf.format(myCalendar.getTime()));
+                String time = sdf.format(myCal.getTime());
+                timeView.setText(time);
             }
 
         };
@@ -157,12 +160,14 @@ public class EventActivity extends AppCompatActivity {
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear,
                                   int dayOfMonth) {
-                myCalendar.set(Calendar.YEAR, year);
-                myCalendar.set(Calendar.MONTH, monthOfYear);
-                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                Calendar myCal = Calendar.getInstance();
+
+                myCal.set(Calendar.YEAR, year);
+                myCal.set(Calendar.MONTH, monthOfYear);
+                myCal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                 String myFormat = "MM/dd/yy"; //In which you need put here
                 SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-                dateView.setText(sdf.format(myCalendar.getTime()));
+                dateView.setText(sdf.format(myCal.getTime()));
             }
         };
 
@@ -179,7 +184,7 @@ public class EventActivity extends AppCompatActivity {
         this.timeView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new TimePickerDialog(timeView.getContext(), time, myCalendar.get(Calendar.HOUR),
+                new TimePickerDialog(timeView.getContext(), time, myCalendar.get(Calendar.HOUR_OF_DAY),
                         myCalendar.get(Calendar.MINUTE),false).show();
 
             }
