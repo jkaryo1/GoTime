@@ -133,13 +133,27 @@
                 android:longClickable="false"
                 android:imeOptions="actionDone" />
 
-            <ImageView
+            <!--<ImageView-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="155dp"-->
+                <!--android:layout_marginTop="5dp"-->
+                <!--android:layout_marginBottom="5dp"-->
+                <!--android:src="@drawable/hopkins_map"-->
+                <!--android:contentDescription="@string/down_arrow" />-->
+            <!--<fragment-->
+                <!--android:id="@+id/map"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="155dp"-->
+                <!--android:name="com.example.reminderapp.EventActivity"/>-->
+
+            <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:map="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/map"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="match_parent"
                 android:layout_height="155dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:src="@drawable/hopkins_map"
-                android:contentDescription="@string/down_arrow" />
+                tools:context="com.example.reminderapp.EventActivity" />
 
             <LinearLayout
                 android:orientation="horizontal"

@@ -136,6 +136,12 @@ public class MainActivity extends AppCompatActivity {
                 overridePendingTransition(R.transition.enter, R.transition.stack);
                 return true;
 
+            case R.id.maps_button:
+                intent = new Intent(this, MapsActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.transition.enter, R.transition.stack);
+                return true;
+
         }
 
         return super.onOptionsItemSelected(item);

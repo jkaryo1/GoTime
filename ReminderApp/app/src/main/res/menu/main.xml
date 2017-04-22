@@ -3,6 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/maps_button"
+        android:orderInCategory="0"
+        android:title="Maps"
+        android:icon="@android:drawable/ic_dialog_map"
+        app:showAsAction="ifRoom" />
+
+
+    <item
         android:id="@+id/new_event_button"
         android:orderInCategory="1"
         android:title="@string/add_event"
