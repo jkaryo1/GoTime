@@ -121,17 +121,24 @@
                 android:layout_height="match_parent"
                 android:text="@string/locLabel" />
 
-            <EditText
-                android:id="@+id/loc_input"
-                style="@style/EditTextRounded"
-                android:hint="@string/locHint"
-                android:inputType="text"
-                android:maxLines="1"
-                android:cursorVisible="false"
-                android:focusable="true"
-                android:focusableInTouchMode="true"
-                android:longClickable="false"
-                android:imeOptions="actionDone" />
+            <!--<EditText-->
+                <!--android:id="@+id/loc_input"-->
+                <!--style="@style/EditTextRounded"-->
+                <!--android:hint="@string/locHint"-->
+                <!--android:inputType="text"-->
+                <!--android:maxLines="1"-->
+                <!--android:cursorVisible="false"-->
+                <!--android:focusable="true"-->
+                <!--android:focusableInTouchMode="true"-->
+                <!--android:longClickable="false"-->
+                <!--android:imeOptions="actionDone" />-->
+            <fragment
+                android:layout_marginBottom="5dp"
+                android:id="@+id/place_autocomplete_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                />
 
             <!--<ImageView-->
                 <!--android:layout_width="match_parent"-->

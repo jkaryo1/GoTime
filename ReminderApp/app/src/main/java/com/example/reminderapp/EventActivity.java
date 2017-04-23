@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
@@ -20,6 +21,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,15 +37,21 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class EventActivity extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
+    private PlaceAutocompleteFragment autocompleteFragment;
     private Toolbar toolbar;
     private TextView title;
     private EditText dateView;
@@ -68,13 +76,33 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event);
+        final Context context = EventActivity.this;
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        Context context = EventActivity.this;
+        this.autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+                LatLngBounds mapViewport = place.getViewport();
+                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mapViewport,0));
+                mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName().toString()));
+                Log.i("onplaceselcted", "Place: " + place.getName());
+            }
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i("onerror", "An error occurred: " + status);
+            }
+        });
+
+
         this.sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 
         final Calendar myCalendar = Calendar.getInstance();
@@ -95,7 +123,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         this.timeView = (EditText) findViewById(R.id.time);
         this.titleInput = (EditText) findViewById(R.id.title_input);
         this.prepTimeInput = (EditText) findViewById(R.id.prep_time);
-        this.locationInput = (EditText) findViewById(R.id.loc_input);
+//        this.locationInput = (EditText) findViewById(R.id.loc_input);
         RelativeLayout transportLayout = (RelativeLayout) findViewById(R.id.transport_spinner_view);
 
         this.transportMethod = (Spinner) transportLayout.findViewById(R.id.transport_spinner);
@@ -112,11 +140,12 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         this.dateView.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
         this.timeView.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
         this.prepTimeInput.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
-        this.locationInput.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
+//        this.locationInput.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
         transportLayout.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
+        this.autocompleteFragment.getView().setBackground(ContextCompat.getDrawable(this, R.drawable.edit_text_field));
         setListeners(this.titleInput);
         setListeners(this.prepTimeInput);
-        setListeners(this.locationInput);
+//        setListeners(this.locationInput);
 
         Intent intent = getIntent();
         this.isExistingEvent = intent.getBooleanExtra("EXISTING_EVENT", false);
@@ -133,7 +162,8 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             this.dateView.setText(this.event.getDate());
             this.timeView.setText(this.event.getTime());
             this.prepTimeInput.setText(String.valueOf(this.event.prepTime));
-            this.locationInput.setText(this.event.location);
+//            this.locationInput.setText(this.event.location);
+            this.autocompleteFragment.setText(this.event.location);
             switch (this.event.transport) {
                 case "Driving":
                     this.transportMethod.setSelection(1);
