@@ -89,6 +89,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             @Override
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
+                mMap.clear();
                 LatLngBounds mapViewport = place.getViewport();
                 mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mapViewport,0));
                 mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName().toString()));
