@@ -9,6 +9,7 @@
     <include layout="@layout/app_bar"/>
 
     <ScrollView
+        android:id="@+id/scroll_view"
         android:layout_height="match_parent"
         android:layout_width="match_parent"
         android:fadeScrollbars="false">
@@ -151,7 +152,7 @@
                 xmlns:map="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
                 android:id="@+id/map"
-                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:name="com.example.reminderapp.WorkaroundMapFragment"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 tools:context="com.example.reminderapp.EventActivity" />
