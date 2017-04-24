@@ -31,3 +31,7 @@ they are practically the same
 
 
 CREDIT:
+The WorkaroundMapFragment.java class, as well as its basic implementation, was
+modeled after Alok Nair's post on StackOverflow regarding enabling vertical map
+movement within a scrollview.
+http://stackoverflow.com/questions/30525066/how-to-set-google-map-fragment-inside-scroll-view
