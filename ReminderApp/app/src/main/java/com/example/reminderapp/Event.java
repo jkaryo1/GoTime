@@ -16,6 +16,8 @@ class Event {
     Integer prepTime;
     String transport;
     String location;
+    String placeID;
+    String gcalID;
     private static final String DATE_FORMAT = "MM/dd/yyyy hh:mm a";
     private static final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
     private static final String JUST_DATE_FORMAT = "MM/dd/yyyy";
