@@ -67,10 +67,21 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
     private boolean isExistingEvent;
     private Event event;
     private SharedPreferences sharedPref;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
+
+    private static final String ID = "id";
+    private static final String TITLE = "title";
+    private static final String DATE = "date";
+    private static final String PREP_TIME = "prep_time";
+    private static final String TRANSPORT = "transport";
+    private static final String LOCATION = "location";
+    private static final String PLACE_ID = "place_id";
+    private static final String GCAL_ID = "gcal_id";
+    private static final String DEPART_TIME = "depart_time";
+
+    private static final String TIME_FORMAT = "h:mm a"; //In which you need put here
+    private static final SimpleDateFormat stf = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault());
+    private static final String DATE_FORMAT = "MM/dd/yy"; //In which you need put here
+    private static final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
 
 
     @Override
@@ -153,13 +164,16 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         this.isExistingEvent = intent.getBooleanExtra("EXISTING_EVENT", false);
         if (this.isExistingEvent) {
             title.setText(R.string.edit_event);
-            int id = intent.getIntExtra("ID", -1);
-            String title = intent.getStringExtra("TITLE");
-            long dateMillis = intent.getLongExtra("DATE", 0);
-            int prepTime = intent.getIntExtra("PREP_TIME", 0);
-            String transport = intent.getStringExtra("TRANSPORT");
-            String location = intent.getStringExtra("LOCATION");
-            this.event = new Event(id, title, dateMillis, prepTime, transport, location);
+            int id = intent.getIntExtra(ID, -1);
+            String title = intent.getStringExtra(TITLE);
+            long dateMillis = intent.getLongExtra(DATE, 0);
+            int prepTime = intent.getIntExtra(PREP_TIME, 0);
+            String transport = intent.getStringExtra(TRANSPORT);
+            String location = intent.getStringExtra(LOCATION);
+            String placeID = intent.getStringExtra(PLACE_ID);
+            String gcalID = intent.getStringExtra(GCAL_ID);
+            long departTime = intent.getLongExtra(DEPART_TIME, 0);
+            this.event = new Event(id, title, dateMillis, prepTime, transport, location, placeID, gcalID, departTime);
             this.titleInput.setText(this.event.title);
             this.dateView.setText(this.event.getDate());
             this.timeView.setText(this.event.getTime());
@@ -193,9 +207,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                 myCal.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 myCal.set(Calendar.MINUTE, minute);
 
-                String myFormat = "h:mm a"; //In which you need put here
-                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-                String time = sdf.format(myCal.getTime());
+                String time = stf.format(myCal.getTime());
                 timeView.setText(time);
             }
 
@@ -210,8 +222,6 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                 myCal.set(Calendar.YEAR, year);
                 myCal.set(Calendar.MONTH, monthOfYear);
                 myCal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                String myFormat = "MM/dd/yy"; //In which you need put here
-                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
                 dateView.setText(sdf.format(myCal.getTime()));
             }
         };
@@ -263,6 +273,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                             .setIcon(icon)
                             .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
+                                    createEvent();
                                     finish();
                                     overridePendingTransition(R.transition.unstack, R.transition.exit);
                                     Toast.makeText(getApplicationContext(), "Event Saved", Toast.LENGTH_SHORT).show();
@@ -415,6 +426,22 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.transition.unstack, R.transition.exit);
+    }
+
+    public void createEvent() {
+        try {
+            String title = this.titleInput.getText().toString();
+            String dateString = this.dateView.getText().toString() + " " + this.timeView.getText().toString();
+            SimpleDateFormat combined = new SimpleDateFormat(DATE_FORMAT + " " + TIME_FORMAT, Locale.getDefault());
+            Calendar date = Calendar.getInstance();
+            date.clear();
+            date.setTime(combined.parse(dateString));
+            int prepTime = Integer.parseInt(this.prepTimeInput.getText().toString());
+            String transport = this.transportMethod.getSelectedItem().toString();
+            String location = this.locationInput.getText().toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

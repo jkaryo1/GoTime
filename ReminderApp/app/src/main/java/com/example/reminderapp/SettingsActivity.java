@@ -93,6 +93,8 @@ public class SettingsActivity extends AppCompatActivity {
                                 peditor.putInt("ALARM_TYPE", alarmSpinner.getSelectedItemPosition());
                                 peditor.putInt("TRANSPORT_TYPE", transportSpinner.getSelectedItemPosition());
                                 peditor.apply();
+                                finish();
+                                overridePendingTransition(R.transition.unstack, R.transition.exit);
                                 Toast.makeText(getApplicationContext(), "Settings updated", Toast.LENGTH_SHORT).show();
                             }
                         })
@@ -114,7 +116,8 @@ public class SettingsActivity extends AppCompatActivity {
                         .setIcon(icon)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                autofill();
+                                finish();
+                                overridePendingTransition(R.transition.unstack, R.transition.exit);
                                 Toast.makeText(activity, "Changes cancelled", Toast.LENGTH_SHORT).show();
                             }
                         })

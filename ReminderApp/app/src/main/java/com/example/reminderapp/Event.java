@@ -18,7 +18,7 @@ class Event {
     String location;
     String placeID;
     String gcalID;
-    Integer travelTime;
+    Calendar departTime;
     private static final String DATE_FORMAT = "MM/dd/yyyy hh:mm a";
     private static final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
     private static final String JUST_DATE_FORMAT = "MM/dd/yyyy";
@@ -26,7 +26,7 @@ class Event {
     private static final String TIME_FORMAT = "h:mm a";
     private static final SimpleDateFormat tf = new SimpleDateFormat(TIME_FORMAT, Locale.US);
 
-    Event(String tit, String d, String tim, Integer p, String tra, String l) {
+    Event(String tit, String d, String tim, Integer p, String tra, String l, String p_id, String g_id) {
         try {
             this.id = -1;
             this.title = tit;
@@ -56,7 +56,7 @@ class Event {
         }
     }
 
-    Event(int i, String tit, long cal, Integer p, String tra, String l) {
+    Event(int i, String tit, long cal, Integer p, String tra, String l, String p_id, String g_id, long d) {
         try {
             this.id = i;
             this.title = tit;
@@ -66,9 +66,26 @@ class Event {
             this.prepTime = p;
             this.transport = tra;
             this.location = l;
+            this.placeID = p_id;
+            this.gcalID = g_id;
+            this.departTime = Calendar.getInstance();
+            this.departTime.clear();
+            this.departTime.setTimeInMillis(d);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    Event(int i, String tit, Calendar cal, Integer p, String tra, String l, String p_id, String g_id, Calendar d) {
+        this.id = i;
+        this.title = tit;
+        this.date = cal;
+        this.prepTime = p;
+        this.transport = tra;
+        this.location = l;
+        this.placeID = p_id;
+        this.gcalID = g_id;
+        this.departTime = d;
     }
 
     void setDate(String d) {
