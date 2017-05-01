@@ -50,7 +50,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class EventActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class
+EventActivity extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
     private PlaceAutocompleteFragment autocompleteFragment;
     private Toolbar toolbar;

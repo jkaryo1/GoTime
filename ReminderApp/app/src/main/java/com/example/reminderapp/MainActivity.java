@@ -18,6 +18,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -85,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
 //        this.recyclerView.addItemDecoration(divider);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         updateUI();
+
     }
 
     @Override
@@ -158,5 +163,36 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
+    public String getDistance(String method, String placeID) throws IOException {
+        String API_KEY = getResources().getString(R.string.google_maps_key);
 
+        //Eventually change this to get current location
+        String origin = "Baltimore,MD";
+
+        method = method.toLowerCase();
+
+        String url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origin="
+                + origin + "&destination=place_id:" + placeID + "&mode=" + method + "&key=" + API_KEY;
+
+        URL google = new URL(url);
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(
+                        google.openStream()));
+        String inputLine;
+
+        String out = "";
+        while ((inputLine = in.readLine()) != null) {
+            if (inputLine.contains("duration")) {
+                inputLine = in.readLine();
+                int index = inputLine.indexOf(":");
+                index += 2;
+                out = inputLine.substring(index);
+            }
+        }
+
+        in.close();
+        return out;
+
+    }
+    
 }
