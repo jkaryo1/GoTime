@@ -10,15 +10,27 @@ import java.util.Locale;
 
 class Event {
 
+
+    /*Integer Id used to represent the calendar in the database*/
     int id;
+    /*Title of the event*/
     String title;
+    /*DateTime for when the event actually starts*/
     Calendar date;
+    /*Number of minutes the user needs to preapre*/
     Integer prepTime;
+    /*String representing the transportation method*/
     String transport;
+    /*Address or location title of the place*/
     String location;
+    /*Id of the place from the google places api*/
     String placeID;
+    /*id of the event in google calendar*/
     String gcalID;
+    /*Calendar used to represent the date and time the user should depart for the event*/
     Calendar departTime;
+
+    
     private static final String DATE_FORMAT = "MM/dd/yyyy hh:mm a";
     private static final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
     private static final String JUST_DATE_FORMAT = "MM/dd/yyyy";

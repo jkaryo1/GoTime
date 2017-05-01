@@ -61,7 +61,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
     private Button cancelButton;
     private EditText titleInput;
     private EditText prepTimeInput;
-    private EditText locationInput;
+    private String locationInput;
     private Spinner transportMethod;
 
     private boolean isExistingEvent;
@@ -99,12 +99,16 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
 
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
+            public void
+
+            @Override
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
                 mMap.clear();
                 LatLngBounds mapViewport = place.getViewport();
                 mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mapViewport,0));
                 mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName().toString()));
+                locationInput = place.getId();
                 Log.i("onplaceselcted", "Place: " + place.getName());
             }
 
@@ -438,7 +442,10 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             date.setTime(combined.parse(dateString));
             int prepTime = Integer.parseInt(this.prepTimeInput.getText().toString());
             String transport = this.transportMethod.getSelectedItem().toString();
-            String location = this.locationInput.getText().toString();
+            /*Need to catch case where this.locationInput is null*/
+            String location = this.locationInput;
+
+//            Event newEvent = new Event(-1 title, date, )
         } catch (Exception e) {
             e.printStackTrace();
         }
