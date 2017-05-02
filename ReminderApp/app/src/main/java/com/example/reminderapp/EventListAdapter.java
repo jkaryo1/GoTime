@@ -125,20 +125,9 @@ class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             eventTitle.setText(event.title);
             eventTime.setText(event.getTime());
             eventLocation.setText(event.location);
-            if (colors[position] == 0) {
-                if (position == 1) {
-                    colors[position] = 1;
-                } else if (colors[position - 1] == 0) {
-                    colors[position] = (colors[position - 2] % 2) + 1;
-                } else {
-                    colors[position] = colors[position - 1];
-                }
-            }
-            if (colors[position] == 1) {
-                cardView.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.darkerCard), PorterDuff.Mode.SRC_IN);
-            } else {
-                cardView.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.lighterCard), PorterDuff.Mode.SRC_IN);
-            }
+
+            cardView.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.lighterCard), PorterDuff.Mode.SRC_IN);
+
         }
     }
     private class DividerHolder extends RecyclerView.ViewHolder {

@@ -30,7 +30,7 @@ class Event {
     /*Calendar used to represent the date and time the user should depart for the event*/
     Calendar departTime;
 
-    
+
     private static final String DATE_FORMAT = "MM/dd/yyyy hh:mm a";
     private static final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
     private static final String JUST_DATE_FORMAT = "MM/dd/yyyy";
@@ -38,35 +38,7 @@ class Event {
     private static final String TIME_FORMAT = "h:mm a";
     private static final SimpleDateFormat tf = new SimpleDateFormat(TIME_FORMAT, Locale.US);
 
-    Event(String tit, String d, String tim, Integer p, String tra, String l, String p_id, String g_id) {
-        try {
-            this.id = -1;
-            this.title = tit;
-            this.date = Calendar.getInstance();
-            this.date.clear();
-            this.date.setTime(sdf.parse(d + " " + tim));
-            this.prepTime = p;
-            this.transport = tra;
-            this.location = l;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
-    Event(int i, String tit, String d, String tim, Integer p, String tra, String l) {
-        try {
-            this.id = i;
-            this.title = tit;
-            this.date = Calendar.getInstance();
-            this.date.clear();
-            this.date.setTime(sdf.parse(d + " " + tim));
-            this.prepTime = p;
-            this.transport = tra;
-            this.location = l;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
     Event(int i, String tit, long cal, Integer p, String tra, String l, String p_id, String g_id, long d) {
         try {

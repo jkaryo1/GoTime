@@ -11,10 +11,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
@@ -38,19 +38,23 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class EventActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class EventActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
     private GoogleMap mMap;
     private PlaceAutocompleteFragment autocompleteFragment;
     private Toolbar toolbar;
@@ -61,8 +65,11 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
     private Button cancelButton;
     private EditText titleInput;
     private EditText prepTimeInput;
-    private String locationInput;
+    private String placeIdInput;
     private Spinner transportMethod;
+
+    private DatabaseAdapter dbAdapter;
+    private GoogleApiClient mGoogleApiClient;
 
     private boolean isExistingEvent;
     private Event event;
@@ -90,6 +97,12 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         setContentView(R.layout.activity_event);
         final Context context = EventActivity.this;
 
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this,0, this)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .build();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         WorkaroundMapFragment mapFragment = (WorkaroundMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -97,10 +110,11 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
 
         this.autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void
+        this.dbAdapter = DatabaseAdapter.getInstance(context);
+        this.dbAdapter.open();
 
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            /*TODO get rid of pin on map on hitting x*/
             @Override
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
@@ -108,7 +122,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                 LatLngBounds mapViewport = place.getViewport();
                 mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mapViewport,0));
                 mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName().toString()));
-                locationInput = place.getId();
+                placeIdInput = place.getId();
                 Log.i("onplaceselcted", "Place: " + place.getName());
             }
 
@@ -140,7 +154,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         this.timeView = (EditText) findViewById(R.id.time);
         this.titleInput = (EditText) findViewById(R.id.title_input);
         this.prepTimeInput = (EditText) findViewById(R.id.prep_time);
-//        this.locationInput = (EditText) findViewById(R.id.loc_input);
+//        this.placeIdInput = (EditText) findViewById(R.id.loc_input);
         RelativeLayout transportLayout = (RelativeLayout) findViewById(R.id.transport_spinner_view);
 
         this.transportMethod = (Spinner) transportLayout.findViewById(R.id.transport_spinner);
@@ -157,12 +171,12 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         this.dateView.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
         this.timeView.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
         this.prepTimeInput.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
-//        this.locationInput.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
+//        this.placeIdInput.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
         transportLayout.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
         this.autocompleteFragment.getView().setBackground(ContextCompat.getDrawable(this, R.drawable.edit_text_field));
         setListeners(this.titleInput);
         setListeners(this.prepTimeInput);
-//        setListeners(this.locationInput);
+//        setListeners(this.placeIdInput);
 
         Intent intent = getIntent();
         this.isExistingEvent = intent.getBooleanExtra("EXISTING_EVENT", false);
@@ -182,7 +196,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             this.dateView.setText(this.event.getDate());
             this.timeView.setText(this.event.getTime());
             this.prepTimeInput.setText(String.valueOf(this.event.prepTime));
-//            this.locationInput.setText(this.event.location);
+//            this.placeIdInput.setText(this.event.location);
             this.autocompleteFragment.setText(this.event.location);
             switch (this.event.transport) {
                 case "Driving":
@@ -442,10 +456,11 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             date.setTime(combined.parse(dateString));
             int prepTime = Integer.parseInt(this.prepTimeInput.getText().toString());
             String transport = this.transportMethod.getSelectedItem().toString();
-            /*Need to catch case where this.locationInput is null*/
-            String location = this.locationInput;
+            /*Need to catch case where this.placeIdInput is null*/
+            String placeId = this.placeIdInput;
 
-//            Event newEvent = new Event(-1 title, date, )
+            Event newEvent = new Event(-1, title, date, prepTime, transport, "nullLoc",placeId,"nullgcalEvent",date);
+            dbAdapter.insertItem(newEvent);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -477,9 +492,44 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                 });
 
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        if (this.isExistingEvent) {
+            Places.GeoDataApi.getPlaceById(mGoogleApiClient, this.event.placeID).setResultCallback(new ResultCallback<PlaceBuffer>() {
+                @Override
+                public void onResult(@NonNull PlaceBuffer places) {
+                    if (places.getStatus().isSuccess() && places.getCount() > 0) {
+                        final Place place = places.get(0);
+
+                        mMap.clear();
+                        LatLngBounds mapViewport = place.getViewport();
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mapViewport,0));
+                        mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName().toString()));
+
+
+                    } else {
+                        Log.e("OnMapReady", "Place not found");
+                    }
+                    places.release();
+                }
+            });
+        } else {
+            // Add a marker in Sydney and move the camera
+            LatLng sydney = new LatLng(-34, 151);
+            mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        }
+
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.e("EventActivity", "onConnectionFailed: ConnectionResult.getErrorCode() = "
+                + connectionResult.getErrorCode());
+
+        // TODO(Developer): Check error code and notify the user of error state and resolution.
+        Toast.makeText(this,
+                "Could not connect to Google API Client: Error " + connectionResult.getErrorCode(),
+                Toast.LENGTH_SHORT).show();
+        EventActivity.this.finish();
     }
 }
