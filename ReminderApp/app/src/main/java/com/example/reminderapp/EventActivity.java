@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
@@ -136,14 +137,19 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             }
         });
 
-        autocompleteFragment.getView().findViewById(R.id.place_autocomplete_clear_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                autocompleteFragment.setText("");
-                mMap.clear();
+        View af = autocompleteFragment.getView();
+        if (af != null) {
+            View clearButton = af.findViewById(R.id.place_autocomplete_clear_button);
+            if (clearButton != null) {
+                clearButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        autocompleteFragment.setText("");
+                        mMap.clear();
+                    }
+                });
             }
-        });
-
+        }
 
         this.sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 
@@ -182,12 +188,15 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         this.dateView.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
         this.timeView.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
         this.prepTimeInput.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
-//        this.placeIdInput.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
         transportLayout.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
-        this.autocompleteFragment.getView().setBackground(ContextCompat.getDrawable(this, R.drawable.edit_text_field));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            this.autocompleteFragment.getView().setBackground(ContextCompat.getDrawable(this, R.drawable.edit_text_field));
+        } else {
+            //noinspection deprecation
+            this.autocompleteFragment.getView().setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.edit_text_field));
+        }
         setListeners(this.titleInput);
         setListeners(this.prepTimeInput);
-//        setListeners(this.placeIdInput);
 
         Intent intent = getIntent();
         this.isExistingEvent = intent.getBooleanExtra("EXISTING_EVENT", false);
