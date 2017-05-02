@@ -279,6 +279,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                             .setIcon(icon)
                             .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int whichButton) {
+                                    updateEvent();
                                     finish();
                                     overridePendingTransition(R.transition.unstack, R.transition.exit);
                                     Toast.makeText(getApplicationContext(), "Event Updated", Toast.LENGTH_SHORT).show();
@@ -387,6 +388,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                         .setIcon(icon)
                         .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
+                                deleteEvent();
                                 finish();
                                 overridePendingTransition(R.transition.unstack, R.transition.exit);
                                 Toast.makeText(getApplicationContext(), "Event Deleted", Toast.LENGTH_SHORT).show();
@@ -444,6 +446,42 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.transition.unstack, R.transition.exit);
+    }
+
+    /**
+     * Deletes current event being viewed in the database.
+     */
+    public void deleteEvent(){
+        this.dbAdapter.removeItem((long) this.event.id);
+    }
+
+    /**
+     * Updates current even being viewed in the database.
+     * Only called if it is an existingevent
+     */
+    public void updateEvent() {
+        try {
+            int id = this.event.id;
+            String title = this.titleInput.getText().toString();
+            String dateString = this.dateView.getText().toString() + " " + this.timeView.getText().toString();
+            SimpleDateFormat combined = new SimpleDateFormat(DATE_FORMAT + " " + TIME_FORMAT, Locale.getDefault());
+            Calendar date = Calendar.getInstance();
+            date.clear();
+            date.setTime(combined.parse(dateString));
+            int prepTime = Integer.parseInt(this.prepTimeInput.getText().toString());
+            String transport = this.transportMethod.getSelectedItem().toString();
+            /*Need to catch case where this.placeIdInput is null*/
+            String placeId = this.event.placeID;
+
+            Event newEvent = new Event(id, title, date, prepTime, transport, "nullLoc",placeId,"nullgcalEvent",date);
+            this.dbAdapter.updateLesson((long) id, newEvent);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     public void createEvent() {
