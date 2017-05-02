@@ -25,6 +25,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 public class SettingsActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TextView title;
@@ -149,6 +154,16 @@ public class SettingsActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        final Button testButton = (Button) findViewById(R.id.test_button);
+        testButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String res = getDistance("walking", "ChIJSegyHuAEyIkRs5URF4j8D18");
+                testButton.setText(res);
+
+            }
+        });
     }
 
     public void autofill() {
@@ -174,5 +189,43 @@ public class SettingsActivity extends AppCompatActivity {
 
         final InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+    }
+
+    public String getDistance(String method, String placeID) {
+        String API_KEY = getResources().getString(R.string.google_maps_key);
+
+        //Eventually change this to get current location, this is Nolans on 33rd
+        String origin = "place_id:ChIJNwXfIuAEyIkRMlSZouZry18";
+
+        method = method.toLowerCase();
+
+        String url = "https://maps.googleapis.com/maps/api/directions/json?origin="
+                + origin + "&destination=place_id:" + placeID + "&mode=" + method + "&key=" + API_KEY;
+        try {
+            URL google = new URL(url);
+            HttpURLConnection conn = (HttpURLConnection) google.openConnection();
+            conn.setConnectTimeout(60000);
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String inputLine;
+
+            String out = "";
+            while ((inputLine = in.readLine()) != null) {
+                System.out.println(inputLine);
+                if (inputLine.contains("duration")) {
+                    inputLine = in.readLine();
+                    int index = inputLine.indexOf(":");
+                    index += 2;
+                    out = inputLine.substring(index);
+                    break;
+                }
+            }
+            out = out.substring(0, out.length()-1);
+            in.close();
+            return out;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

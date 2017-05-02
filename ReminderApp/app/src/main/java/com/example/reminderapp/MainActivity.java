@@ -89,6 +89,9 @@ public class MainActivity extends AppCompatActivity {
 //        this.recyclerView.addItemDecoration(divider);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(this));
         updateUI();
+        //the place id is "Char-Mar"
+        //String message = getDistance("walking", "ChIJSegyHuAEyIkRs5URF4j8D18");
+       // System.out.println(message);
 
     }
 
@@ -163,36 +166,41 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
-    public String getDistance(String method, String placeID) throws IOException {
+    public String getDistance(String method, String placeID) {
         String API_KEY = getResources().getString(R.string.google_maps_key);
 
-        //Eventually change this to get current location
-        String origin = "Baltimore,MD";
+        //Eventually change this to get current location, this is Nolans on 33rd
+        String origin = "place_id:ChIJNwXfIuAEyIkRMlSZouZry18";
 
         method = method.toLowerCase();
 
-        String url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origin="
+        String url = "https://maps.googleapis.com/maps/api/directions/json?origin="
                 + origin + "&destination=place_id:" + placeID + "&mode=" + method + "&key=" + API_KEY;
+        try {
+            URL google = new URL(url);
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                            google.openStream()));
+            String inputLine;
 
-        URL google = new URL(url);
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(
-                        google.openStream()));
-        String inputLine;
-
-        String out = "";
-        while ((inputLine = in.readLine()) != null) {
-            if (inputLine.contains("duration")) {
-                inputLine = in.readLine();
-                int index = inputLine.indexOf(":");
-                index += 2;
-                out = inputLine.substring(index);
+            String out = "";
+            while ((inputLine = in.readLine()) != null) {
+                System.out.println(inputLine);
+                if (inputLine.contains("duration")) {
+                    inputLine = in.readLine();
+                    int index = inputLine.indexOf(":");
+                    index += 2;
+                    out = inputLine.substring(index);
+                    break;
+                }
             }
+            out = out.substring(0, out.length()-1);
+            in.close();
+            return out;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        in.close();
-        return out;
-
+        return null;
     }
-    
+
 }
