@@ -26,6 +26,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -196,8 +197,11 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             this.dateView.setText(this.event.getDate());
             this.timeView.setText(this.event.getTime());
             this.prepTimeInput.setText(String.valueOf(this.event.prepTime));
-//            this.placeIdInput.setText(this.event.location);
             this.autocompleteFragment.setText(this.event.location);
+
+
+
+
             switch (this.event.transport) {
                 case "Driving":
                     this.transportMethod.setSelection(1);
