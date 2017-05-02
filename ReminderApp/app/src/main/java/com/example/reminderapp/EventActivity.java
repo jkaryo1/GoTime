@@ -67,6 +67,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
     private EditText titleInput;
     private EditText prepTimeInput;
     private String placeIdInput;
+    private String placeNameInput;
     private Spinner transportMethod;
 
     private DatabaseAdapter dbAdapter;
@@ -124,6 +125,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                 mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mapViewport,0));
                 mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName().toString()));
                 placeIdInput = place.getId();
+                placeNameInput = place.getName().toString();
                 Log.i("onplaceselcted", "Place: " + place.getName());
             }
 
@@ -131,6 +133,14 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             public void onError(Status status) {
                 // TODO: Handle the error.
                 Log.i("onerror", "An error occurred: " + status);
+            }
+        });
+
+        autocompleteFragment.getView().findViewById(R.id.place_autocomplete_clear_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                autocompleteFragment.setText("");
+                mMap.clear();
             }
         });
 
@@ -192,6 +202,8 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             String placeID = intent.getStringExtra(PLACE_ID);
             String gcalID = intent.getStringExtra(GCAL_ID);
             long departTime = intent.getLongExtra(DEPART_TIME, 0);
+            this.placeNameInput = location;
+            this.placeIdInput = placeID;
             this.event = new Event(id, title, dateMillis, prepTime, transport, location, placeID, gcalID, departTime);
             this.titleInput.setText(this.event.title);
             this.dateView.setText(this.event.getDate());
@@ -475,9 +487,9 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             int prepTime = Integer.parseInt(this.prepTimeInput.getText().toString());
             String transport = this.transportMethod.getSelectedItem().toString();
             /*Need to catch case where this.placeIdInput is null*/
-            String placeId = this.event.placeID;
 
-            Event newEvent = new Event(id, title, date, prepTime, transport, "nullLoc",placeId,"nullgcalEvent",date);
+
+            Event newEvent = new Event(id, title, date, prepTime, transport, placeNameInput,placeIdInput,"nullgcalEvent",date);
             this.dbAdapter.updateLesson((long) id, newEvent);
 
 
@@ -499,9 +511,8 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             int prepTime = Integer.parseInt(this.prepTimeInput.getText().toString());
             String transport = this.transportMethod.getSelectedItem().toString();
             /*Need to catch case where this.placeIdInput is null*/
-            String placeId = this.placeIdInput;
 
-            Event newEvent = new Event(-1, title, date, prepTime, transport, "nullLoc",placeId,"nullgcalEvent",date);
+            Event newEvent = new Event(-1, title, date, prepTime, transport, placeNameInput,placeIdInput,"nullgcalEvent",date);
             dbAdapter.insertItem(newEvent);
         } catch (Exception e) {
             e.printStackTrace();
