@@ -13,6 +13,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -137,7 +139,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             }
         });
 
-        View af = autocompleteFragment.getView();
+        View af = this.autocompleteFragment.getView();
         if (af != null) {
             View clearButton = af.findViewById(R.id.place_autocomplete_clear_button);
             if (clearButton != null) {
@@ -272,6 +274,10 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         this.dateView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (getCurrentFocus() != null) {
+                    getCurrentFocus().clearFocus();
+                }
+                dateView.requestFocus();
                 new DatePickerDialog(dateView.getContext(), date, myCalendar.get(Calendar.YEAR),
                         myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show();
 
@@ -282,6 +288,10 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         this.timeView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (getCurrentFocus() != null) {
+                    getCurrentFocus().clearFocus();
+                }
+                timeView.requestFocus();
                 new TimePickerDialog(timeView.getContext(), time, myCalendar.get(Calendar.HOUR_OF_DAY),
                         myCalendar.get(Calendar.MINUTE),false).show();
 
@@ -292,40 +302,64 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         this.saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Drawable icon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_menu_save, null);
-                if (icon != null) {
-                    icon.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+                // Ensure all fields are completed
+                Boolean incomplete = titleInput.getText().toString().equals("");
+                if (!incomplete) {
+                    incomplete = dateView.getText().toString().equals("");
+                    if (!incomplete) {
+                        incomplete = timeView.getText().toString().equals("");
+                        if (!incomplete) {
+                            incomplete = prepTimeInput.getText().toString().equals("");
+                            if (!incomplete) {
+                                incomplete = placeIdInput == null || placeIdInput.equals("");
+                            }
+                        }
+                    }
                 }
-                // Create confirmation dialog
-                // On confirm, save settings, update prefs, and create Toast
-                if(isExistingEvent) {
-                    new AlertDialog.Builder(activity).setTitle("Update Event")
-                            .setMessage("Are you sure you want to update event?")
-                            .setIcon(icon)
-                            .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    updateEvent();
-                                    finish();
-                                    overridePendingTransition(R.transition.unstack, R.transition.exit);
-                                    Toast.makeText(getApplicationContext(), "Event Updated", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .setNegativeButton(R.string.cancel, null).show();
+                if (incomplete) {
+                    Drawable badIcon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_dialog_alert, null);
+                    if (badIcon != null) {
+                        badIcon.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+                    }
+                    new AlertDialog.Builder(activity).setTitle("Form Incomplete")
+                            .setMessage("Fill out all empty fields before continuing.")
+                            .setIcon(badIcon)
+                            .setNeutralButton(android.R.string.ok, null).show();
                 } else {
-                    new AlertDialog.Builder(activity).setTitle("Add Event")
-                            .setMessage("Are you sure you want to save event?")
-                            .setIcon(icon)
-                            .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    createEvent();
-                                    finish();
-                                    overridePendingTransition(R.transition.unstack, R.transition.exit);
-                                    Toast.makeText(getApplicationContext(), "Event Saved", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .setNegativeButton(R.string.cancel, null).show();
+                    Drawable icon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_menu_save, null);
+                    if (icon != null) {
+                        icon.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+                    }
+                    // Create confirmation dialog
+                    // On confirm, save settings, update prefs, and create Toast
+                    if(isExistingEvent) {
+                        new AlertDialog.Builder(activity).setTitle("Update Event")
+                                .setMessage("Are you sure you want to update event?")
+                                .setIcon(icon)
+                                .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        updateEvent();
+                                        finish();
+                                        overridePendingTransition(R.transition.unstack, R.transition.exit);
+                                        Toast.makeText(getApplicationContext(), "Event Updated", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .setNegativeButton(R.string.cancel, null).show();
+                    } else {
+                        new AlertDialog.Builder(activity).setTitle("Add Event")
+                                .setMessage("Are you sure you want to save event?")
+                                .setIcon(icon)
+                                .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        createEvent();
+                                        finish();
+                                        overridePendingTransition(R.transition.unstack, R.transition.exit);
+                                        Toast.makeText(getApplicationContext(), "Event Saved", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .setNegativeButton(R.string.cancel, null).show();
+                    }
                 }
-
             }
         });
 
@@ -574,10 +608,22 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                 }
             });
         } else {
-            // Add a marker in Sydney and move the camera
-            LatLng sydney = new LatLng(-34, 151);
-            mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+            try {
+                // Add a marker in Sydney and move the camera
+                LatLng lastLoc = new LatLng(-34, 151);
+                LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                Log.d("TAG", "here1");
+                if (location != null) {
+                    Log.d("TAG", "here2");
+                    double latitude = location.getLatitude();
+                    double longitude = location.getLongitude();
+                    lastLoc = new LatLng(latitude, longitude);
+                }
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(lastLoc));
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            }
         }
 
 
