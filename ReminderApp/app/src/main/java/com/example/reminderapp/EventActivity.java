@@ -608,22 +608,8 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                 }
             });
         } else {
-            try {
-                // Add a marker in Sydney and move the camera
-                LatLng lastLoc = new LatLng(-34, 151);
-                LocationManager locationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
-                Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                Log.d("TAG", "here1");
-                if (location != null) {
-                    Log.d("TAG", "here2");
-                    double latitude = location.getLatitude();
-                    double longitude = location.getLongitude();
-                    lastLoc = new LatLng(latitude, longitude);
-                }
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(lastLoc));
-            } catch (SecurityException e) {
-                e.printStackTrace();
-            }
+            LatLng lastLoc = new LatLng(39, -76);
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(lastLoc));
         }
 
 
