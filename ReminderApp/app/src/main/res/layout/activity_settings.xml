@@ -109,7 +109,6 @@
                 android:src="@drawable/ic_down_arrow" />
         </RelativeLayout>
 
-
         <ImageButton
             android:layout_gravity="center"
             android:layout_marginTop="50dp"
@@ -141,9 +140,5 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
         </LinearLayout>
-
-
     </LinearLayout>
-
-
 </LinearLayout>

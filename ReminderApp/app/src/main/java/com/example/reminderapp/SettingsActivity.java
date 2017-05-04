@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
@@ -62,7 +63,7 @@ public class SettingsActivity extends AppCompatActivity {
         this.saveButton.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
 
         /*Setting upp the SharedPreferences object*/
-        Context context = SettingsActivity.this;
+        final Context context = SettingsActivity.this;
         this.sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 
         this.alarmSpinner = (Spinner) alarmLayout.findViewById(R.id.alarm_spinner);
@@ -131,9 +132,22 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    defaultPrepTime.performClick();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        v.setBackground(ContextCompat.getDrawable(context, R.drawable.edit_text_highlighted));
+                    } else {
+                        //noinspection deprecation
+                        v.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.edit_text_highlighted));
+                    }
+                    v.performClick();
                 } else {
                     hideKeyboard(v);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        v.setBackground(ContextCompat.getDrawable(context, R.drawable.edit_text_field));
+                    } else {
+                        //noinspection deprecation
+                        v.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.edit_text_field));
+                    }
+                    v.clearFocus();
                 }
             }
         });

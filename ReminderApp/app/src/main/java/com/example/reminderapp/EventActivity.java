@@ -176,8 +176,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         this.timeView = (EditText) findViewById(R.id.time);
         this.titleInput = (EditText) findViewById(R.id.title_input);
         this.prepTimeInput = (EditText) findViewById(R.id.prep_time);
-//        this.placeIdInput = (EditText) findViewById(R.id.loc_input);
-        RelativeLayout transportLayout = (RelativeLayout) findViewById(R.id.transport_spinner_view);
+        final RelativeLayout transportLayout = (RelativeLayout) findViewById(R.id.transport_spinner_view);
 
         this.transportMethod = (Spinner) transportLayout.findViewById(R.id.transport_spinner);
 
@@ -398,6 +397,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
 
             }
         });
+
     }
 
     @Override
@@ -472,7 +472,6 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                     //noinspection deprecation
                     et.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.edit_text_highlighted));
                 }
-//                et.setBackground(ContextCompat.getDrawable(context, R.drawable.edit_text_field));
             }
         });
         et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
