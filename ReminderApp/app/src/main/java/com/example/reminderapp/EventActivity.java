@@ -11,10 +11,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
@@ -26,6 +29,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -38,19 +42,23 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class EventActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class EventActivity extends AppCompatActivity implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener {
     private GoogleMap mMap;
     private PlaceAutocompleteFragment autocompleteFragment;
     private Toolbar toolbar;
@@ -61,16 +69,31 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
     private Button cancelButton;
     private EditText titleInput;
     private EditText prepTimeInput;
-    private EditText locationInput;
+    private String placeIdInput;
+    private String placeNameInput;
     private Spinner transportMethod;
+
+    private DatabaseAdapter dbAdapter;
+    private GoogleApiClient mGoogleApiClient;
 
     private boolean isExistingEvent;
     private Event event;
     private SharedPreferences sharedPref;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
+
+    private static final String ID = "id";
+    private static final String TITLE = "title";
+    private static final String DATE = "date";
+    private static final String PREP_TIME = "prep_time";
+    private static final String TRANSPORT = "transport";
+    private static final String LOCATION = "location";
+    private static final String PLACE_ID = "place_id";
+    private static final String GCAL_ID = "gcal_id";
+    private static final String DEPART_TIME = "depart_time";
+
+    private static final String TIME_FORMAT = "h:mm a"; //In which you need put here
+    private static final SimpleDateFormat stf = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault());
+    private static final String DATE_FORMAT = "MM/dd/yy"; //In which you need put here
+    private static final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
 
 
     @Override
@@ -79,6 +102,12 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         setContentView(R.layout.activity_event);
         final Context context = EventActivity.this;
 
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this,0, this)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .build();
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         WorkaroundMapFragment mapFragment = (WorkaroundMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -86,7 +115,11 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
 
         this.autocompleteFragment = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
+        this.dbAdapter = DatabaseAdapter.getInstance(context);
+        this.dbAdapter.open();
+
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            /*TODO get rid of pin on map on hitting x*/
             @Override
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
@@ -94,6 +127,8 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                 LatLngBounds mapViewport = place.getViewport();
                 mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mapViewport,0));
                 mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName().toString()));
+                placeIdInput = place.getId();
+                placeNameInput = place.getName().toString();
                 Log.i("onplaceselcted", "Place: " + place.getName());
             }
 
@@ -104,6 +139,22 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             }
         });
 
+        View af = this.autocompleteFragment.getView();
+        if (af != null) {
+            View clearButton = af.findViewById(R.id.place_autocomplete_clear_button);
+            if (clearButton != null) {
+                clearButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        autocompleteFragment.setText("");
+                        mMap.clear();
+                    }
+                });
+            }
+            EditText locInput = (EditText) af.findViewById(R.id.place_autocomplete_search_input);
+            locInput.setTextColor(ContextCompat.getColor(this, R.color.darkGray));
+            locInput.setTextSize(18f);
+        }
 
         this.sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 
@@ -125,8 +176,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         this.timeView = (EditText) findViewById(R.id.time);
         this.titleInput = (EditText) findViewById(R.id.title_input);
         this.prepTimeInput = (EditText) findViewById(R.id.prep_time);
-//        this.locationInput = (EditText) findViewById(R.id.loc_input);
-        RelativeLayout transportLayout = (RelativeLayout) findViewById(R.id.transport_spinner_view);
+        final RelativeLayout transportLayout = (RelativeLayout) findViewById(R.id.transport_spinner_view);
 
         this.transportMethod = (Spinner) transportLayout.findViewById(R.id.transport_spinner);
 
@@ -138,34 +188,40 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
 
         this.saveButton.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
 
-        this.titleInput.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
-        this.dateView.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
-        this.timeView.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
-        this.prepTimeInput.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
-//        this.locationInput.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
-        transportLayout.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
-        this.autocompleteFragment.getView().setBackground(ContextCompat.getDrawable(this, R.drawable.edit_text_field));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            this.autocompleteFragment.getView().setBackground(ContextCompat.getDrawable(this, R.drawable.edit_text_field));
+        } else {
+            //noinspection deprecation
+            this.autocompleteFragment.getView().setBackgroundDrawable(ContextCompat.getDrawable(this, R.drawable.edit_text_field));
+        }
         setListeners(this.titleInput);
         setListeners(this.prepTimeInput);
-//        setListeners(this.locationInput);
 
         Intent intent = getIntent();
         this.isExistingEvent = intent.getBooleanExtra("EXISTING_EVENT", false);
         if (this.isExistingEvent) {
             title.setText(R.string.edit_event);
-            int id = intent.getIntExtra("ID", -1);
-            String title = intent.getStringExtra("TITLE");
-            long dateMillis = intent.getLongExtra("DATE", 0);
-            int prepTime = intent.getIntExtra("PREP_TIME", 0);
-            String transport = intent.getStringExtra("TRANSPORT");
-            String location = intent.getStringExtra("LOCATION");
-            this.event = new Event(id, title, dateMillis, prepTime, transport, location);
+            int id = intent.getIntExtra(ID, -1);
+            String title = intent.getStringExtra(TITLE);
+            long dateMillis = intent.getLongExtra(DATE, 0);
+            int prepTime = intent.getIntExtra(PREP_TIME, 0);
+            String transport = intent.getStringExtra(TRANSPORT);
+            String location = intent.getStringExtra(LOCATION);
+            String placeID = intent.getStringExtra(PLACE_ID);
+            String gcalID = intent.getStringExtra(GCAL_ID);
+            long departTime = intent.getLongExtra(DEPART_TIME, 0);
+            this.placeNameInput = location;
+            this.placeIdInput = placeID;
+            this.event = new Event(id, title, dateMillis, prepTime, transport, location, placeID, gcalID, departTime);
             this.titleInput.setText(this.event.title);
             this.dateView.setText(this.event.getDate());
             this.timeView.setText(this.event.getTime());
             this.prepTimeInput.setText(String.valueOf(this.event.prepTime));
-//            this.locationInput.setText(this.event.location);
             this.autocompleteFragment.setText(this.event.location);
+
+
+
+
             switch (this.event.transport) {
                 case "Driving":
                     this.transportMethod.setSelection(1);
@@ -193,9 +249,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                 myCal.set(Calendar.HOUR_OF_DAY, hourOfDay);
                 myCal.set(Calendar.MINUTE, minute);
 
-                String myFormat = "h:mm a"; //In which you need put here
-                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
-                String time = sdf.format(myCal.getTime());
+                String time = stf.format(myCal.getTime());
                 timeView.setText(time);
             }
 
@@ -210,8 +264,6 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                 myCal.set(Calendar.YEAR, year);
                 myCal.set(Calendar.MONTH, monthOfYear);
                 myCal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                String myFormat = "MM/dd/yy"; //In which you need put here
-                SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
                 dateView.setText(sdf.format(myCal.getTime()));
             }
         };
@@ -219,6 +271,10 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         this.dateView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (getCurrentFocus() != null) {
+                    getCurrentFocus().clearFocus();
+                }
+                dateView.requestFocus();
                 new DatePickerDialog(dateView.getContext(), date, myCalendar.get(Calendar.YEAR),
                         myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show();
 
@@ -229,6 +285,10 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         this.timeView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (getCurrentFocus() != null) {
+                    getCurrentFocus().clearFocus();
+                }
+                timeView.requestFocus();
                 new TimePickerDialog(timeView.getContext(), time, myCalendar.get(Calendar.HOUR_OF_DAY),
                         myCalendar.get(Calendar.MINUTE),false).show();
 
@@ -239,38 +299,64 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         this.saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Drawable icon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_menu_save, null);
-                if (icon != null) {
-                    icon.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+                // Ensure all fields are completed
+                Boolean incomplete = titleInput.getText().toString().equals("");
+                if (!incomplete) {
+                    incomplete = dateView.getText().toString().equals("");
+                    if (!incomplete) {
+                        incomplete = timeView.getText().toString().equals("");
+                        if (!incomplete) {
+                            incomplete = prepTimeInput.getText().toString().equals("");
+                            if (!incomplete) {
+                                incomplete = placeIdInput == null || placeIdInput.equals("");
+                            }
+                        }
+                    }
                 }
-                // Create confirmation dialog
-                // On confirm, save settings, update prefs, and create Toast
-                if(isExistingEvent) {
-                    new AlertDialog.Builder(activity).setTitle("Update Event")
-                            .setMessage("Are you sure you want to update event?")
-                            .setIcon(icon)
-                            .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    finish();
-                                    overridePendingTransition(R.transition.unstack, R.transition.exit);
-                                    Toast.makeText(getApplicationContext(), "Event Updated", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .setNegativeButton(R.string.cancel, null).show();
+                if (incomplete) {
+                    Drawable badIcon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_dialog_alert, null);
+                    if (badIcon != null) {
+                        badIcon.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+                    }
+                    new AlertDialog.Builder(activity).setTitle("Form Incomplete")
+                            .setMessage("Fill out all empty fields before continuing.")
+                            .setIcon(badIcon)
+                            .setNeutralButton(android.R.string.ok, null).show();
                 } else {
-                    new AlertDialog.Builder(activity).setTitle("Add Event")
-                            .setMessage("Are you sure you want to save event?")
-                            .setIcon(icon)
-                            .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    finish();
-                                    overridePendingTransition(R.transition.unstack, R.transition.exit);
-                                    Toast.makeText(getApplicationContext(), "Event Saved", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .setNegativeButton(R.string.cancel, null).show();
+                    Drawable icon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_menu_save, null);
+                    if (icon != null) {
+                        icon.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+                    }
+                    // Create confirmation dialog
+                    // On confirm, save settings, update prefs, and create Toast
+                    if(isExistingEvent) {
+                        new AlertDialog.Builder(activity).setTitle("Update Event")
+                                .setMessage("Are you sure you want to update event?")
+                                .setIcon(icon)
+                                .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        updateEvent();
+                                        finish();
+                                        overridePendingTransition(R.transition.unstack, R.transition.exit);
+                                        Toast.makeText(getApplicationContext(), "Event Updated", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .setNegativeButton(R.string.cancel, null).show();
+                    } else {
+                        new AlertDialog.Builder(activity).setTitle("Add Event")
+                                .setMessage("Are you sure you want to save event?")
+                                .setIcon(icon)
+                                .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        createEvent();
+                                        finish();
+                                        overridePendingTransition(R.transition.unstack, R.transition.exit);
+                                        Toast.makeText(getApplicationContext(), "Event Saved", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .setNegativeButton(R.string.cancel, null).show();
+                    }
                 }
-
             }
         });
 
@@ -311,6 +397,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
 
             }
         });
+
     }
 
     @Override
@@ -358,6 +445,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                         .setIcon(icon)
                         .setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
+                                deleteEvent();
                                 finish();
                                 overridePendingTransition(R.transition.unstack, R.transition.exit);
                                 Toast.makeText(getApplicationContext(), "Event Deleted", Toast.LENGTH_SHORT).show();
@@ -372,19 +460,39 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
     }
 
     public void setListeners(final EditText et) {
+        final Context context = EventActivity.this;
+
         et.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 et.setCursorVisible(true);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    et.setBackground(ContextCompat.getDrawable(context, R.drawable.edit_text_highlighted));
+                } else {
+                    //noinspection deprecation
+                    et.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.edit_text_highlighted));
+                }
             }
         });
         et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        et.setBackground(ContextCompat.getDrawable(context, R.drawable.edit_text_highlighted));
+                    } else {
+                        //noinspection deprecation
+                        et.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.edit_text_highlighted));
+                    }
                     et.performClick();
                 } else {
                     hideKeyboard(v, et);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        et.setBackground(ContextCompat.getDrawable(context, R.drawable.edit_text_field));
+                    } else {
+                        //noinspection deprecation
+                        et.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.edit_text_field));
+                    }
                     et.clearFocus();
                 }
             }
@@ -418,6 +526,61 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
     }
 
     /**
+     * Deletes current event being viewed in the database.
+     */
+    public void deleteEvent(){
+        this.dbAdapter.removeItem((long) this.event.id);
+    }
+
+    /**
+     * Updates current even being viewed in the database.
+     * Only called if it is an existingevent
+     */
+    public void updateEvent() {
+        try {
+            int id = this.event.id;
+            String title = this.titleInput.getText().toString();
+            String dateString = this.dateView.getText().toString() + " " + this.timeView.getText().toString();
+            SimpleDateFormat combined = new SimpleDateFormat(DATE_FORMAT + " " + TIME_FORMAT, Locale.getDefault());
+            Calendar date = Calendar.getInstance();
+            date.clear();
+            date.setTime(combined.parse(dateString));
+            int prepTime = Integer.parseInt(this.prepTimeInput.getText().toString());
+            String transport = this.transportMethod.getSelectedItem().toString();
+            /*Need to catch case where this.placeIdInput is null*/
+
+
+            Event newEvent = new Event(id, title, date, prepTime, transport, placeNameInput,placeIdInput,"nullgcalEvent",date);
+            this.dbAdapter.updateLesson((long) id, newEvent);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void createEvent() {
+        try {
+            String title = this.titleInput.getText().toString();
+            String dateString = this.dateView.getText().toString() + " " + this.timeView.getText().toString();
+            SimpleDateFormat combined = new SimpleDateFormat(DATE_FORMAT + " " + TIME_FORMAT, Locale.getDefault());
+            Calendar date = Calendar.getInstance();
+            date.clear();
+            date.setTime(combined.parse(dateString));
+            int prepTime = Integer.parseInt(this.prepTimeInput.getText().toString());
+            String transport = this.transportMethod.getSelectedItem().toString();
+            /*Need to catch case where this.placeIdInput is null*/
+
+            Event newEvent = new Event(-1, title, date, prepTime, transport, placeNameInput,placeIdInput,"nullgcalEvent",date);
+            dbAdapter.insertItem(newEvent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
      * This is where we can add markers or lines, add listeners or move the camera. In this case,
@@ -443,9 +606,42 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                 });
 
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        if (this.isExistingEvent) {
+            Places.GeoDataApi.getPlaceById(mGoogleApiClient, this.event.placeID).setResultCallback(new ResultCallback<PlaceBuffer>() {
+                @Override
+                public void onResult(@NonNull PlaceBuffer places) {
+                    if (places.getStatus().isSuccess() && places.getCount() > 0) {
+                        final Place place = places.get(0);
+
+                        mMap.clear();
+                        LatLngBounds mapViewport = place.getViewport();
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(mapViewport,0));
+                        mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title(place.getName().toString()));
+
+
+                    } else {
+                        Log.e("OnMapReady", "Place not found");
+                    }
+                    places.release();
+                }
+            });
+        } else {
+            LatLng lastLoc = new LatLng(39, -76);
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(lastLoc));
+        }
+
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.e("EventActivity", "onConnectionFailed: ConnectionResult.getErrorCode() = "
+                + connectionResult.getErrorCode());
+
+        // TODO(Developer): Check error code and notify the user of error state and resolution.
+        Toast.makeText(this,
+                "Could not connect to Google API Client: Error " + connectionResult.getErrorCode(),
+                Toast.LENGTH_SHORT).show();
+        EventActivity.this.finish();
     }
 }

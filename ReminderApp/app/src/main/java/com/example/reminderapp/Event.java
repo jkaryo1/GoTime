@@ -10,15 +10,27 @@ import java.util.Locale;
 
 class Event {
 
+
+    /*Integer Id used to represent the calendar in the database*/
     int id;
+    /*Title of the event*/
     String title;
+    /*DateTime for when the event actually starts*/
     Calendar date;
+    /*Number of minutes the user needs to preapre*/
     Integer prepTime;
+    /*String representing the transportation method*/
     String transport;
+    /*Address or location title of the place*/
     String location;
+    /*Id of the place from the google places api*/
     String placeID;
+    /*id of the event in google calendar*/
     String gcalID;
-    Integer travelTime;
+    /*Calendar used to represent the date and time the user should depart for the event*/
+    Calendar departTime;
+
+
     private static final String DATE_FORMAT = "MM/dd/yyyy hh:mm a";
     private static final SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT, Locale.US);
     private static final String JUST_DATE_FORMAT = "MM/dd/yyyy";
@@ -26,37 +38,9 @@ class Event {
     private static final String TIME_FORMAT = "h:mm a";
     private static final SimpleDateFormat tf = new SimpleDateFormat(TIME_FORMAT, Locale.US);
 
-    Event(String tit, String d, String tim, Integer p, String tra, String l) {
-        try {
-            this.id = -1;
-            this.title = tit;
-            this.date = Calendar.getInstance();
-            this.date.clear();
-            this.date.setTime(sdf.parse(d + " " + tim));
-            this.prepTime = p;
-            this.transport = tra;
-            this.location = l;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
-    Event(int i, String tit, String d, String tim, Integer p, String tra, String l) {
-        try {
-            this.id = i;
-            this.title = tit;
-            this.date = Calendar.getInstance();
-            this.date.clear();
-            this.date.setTime(sdf.parse(d + " " + tim));
-            this.prepTime = p;
-            this.transport = tra;
-            this.location = l;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
-    Event(int i, String tit, long cal, Integer p, String tra, String l) {
+    Event(int i, String tit, long cal, Integer p, String tra, String l, String p_id, String g_id, long d) {
         try {
             this.id = i;
             this.title = tit;
@@ -66,9 +50,26 @@ class Event {
             this.prepTime = p;
             this.transport = tra;
             this.location = l;
+            this.placeID = p_id;
+            this.gcalID = g_id;
+            this.departTime = Calendar.getInstance();
+            this.departTime.clear();
+            this.departTime.setTimeInMillis(d);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    Event(int i, String tit, Calendar cal, Integer p, String tra, String l, String p_id, String g_id, Calendar d) {
+        this.id = i;
+        this.title = tit;
+        this.date = cal;
+        this.prepTime = p;
+        this.transport = tra;
+        this.location = l;
+        this.placeID = p_id;
+        this.gcalID = g_id;
+        this.departTime = d;
     }
 
     void setDate(String d) {
