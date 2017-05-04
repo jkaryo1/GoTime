@@ -22,7 +22,7 @@
         android:id="@+id/next_event_time"
         android:gravity="center"
         android:textSize="20sp"
-        android:textColor="@android:color/black"/>
+        android:textColor="@color/darkGray"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/event_recycler_view"

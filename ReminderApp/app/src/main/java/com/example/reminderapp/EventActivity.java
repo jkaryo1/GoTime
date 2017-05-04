@@ -151,6 +151,9 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                     }
                 });
             }
+            EditText locInput = (EditText) af.findViewById(R.id.place_autocomplete_search_input);
+            locInput.setTextColor(ContextCompat.getColor(this, R.color.darkGray));
+            locInput.setTextSize(18f);
         }
 
         this.sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
@@ -186,11 +189,6 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
 
         this.saveButton.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
 
-        this.titleInput.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
-        this.dateView.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
-        this.timeView.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
-        this.prepTimeInput.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
-        transportLayout.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             this.autocompleteFragment.getView().setBackground(ContextCompat.getDrawable(this, R.drawable.edit_text_field));
         } else {

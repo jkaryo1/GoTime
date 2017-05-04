@@ -6,13 +6,12 @@
 
     <!--Strings for Event add/edit fragment-->
     <string name="titleLabel">Event Title</string>
-    <string name="titleHint">Enter Title…</string>
 
     <string name="dateLabel">Event Date</string>
-    <string name="dateHint">Enter Date…</string>
+    <string name="dateHint">Select Date</string>
 
     <string name="timeLabel">Event Time</string>
-    <string name="timeHint">Enter Time…</string>
+    <string name="timeHint">Select Time</string>
 
     <string name="prepTimeLabel">Minutes to prepare</string>
     <string name="prepTimeHint">Enter minutes to prepare</string>
@@ -20,7 +19,6 @@
     <string name="transportMethodLabel">Transportation Method</string>
 
     <string name="locLabel">Event Location</string>
-    <string name="locHint">Enter Location Address…</string>
 
     <string name="cancelButton">Cancel</string>
     <string name="saveButton">Save</string>

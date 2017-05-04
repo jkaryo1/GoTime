@@ -12,7 +12,6 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.ButtonBarLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
@@ -60,9 +59,6 @@ public class SettingsActivity extends AppCompatActivity {
         this.transportLayout = (RelativeLayout) findViewById(R.id.transport_spinner_view);
         this.saveButton = (Button) findViewById(R.id.save_button);
         this.cancelButton = (Button) findViewById(R.id.cancel_button);
-        this.defaultPrepTime.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
-        this.transportLayout.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
-        this.alarmLayout.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
         this.saveButton.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
 
         /*Setting upp the SharedPreferences object*/
