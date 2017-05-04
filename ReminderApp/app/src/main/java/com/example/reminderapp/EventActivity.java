@@ -460,19 +460,40 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
     }
 
     public void setListeners(final EditText et) {
+        final Context context = EventActivity.this;
+
         et.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 et.setCursorVisible(true);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    et.setBackground(ContextCompat.getDrawable(context, R.drawable.edit_text_highlighted));
+                } else {
+                    //noinspection deprecation
+                    et.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.edit_text_highlighted));
+                }
+//                et.setBackground(ContextCompat.getDrawable(context, R.drawable.edit_text_field));
             }
         });
         et.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        et.setBackground(ContextCompat.getDrawable(context, R.drawable.edit_text_highlighted));
+                    } else {
+                        //noinspection deprecation
+                        et.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.edit_text_highlighted));
+                    }
                     et.performClick();
                 } else {
                     hideKeyboard(v, et);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        et.setBackground(ContextCompat.getDrawable(context, R.drawable.edit_text_field));
+                    } else {
+                        //noinspection deprecation
+                        et.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.edit_text_field));
+                    }
                     et.clearFocus();
                 }
             }
