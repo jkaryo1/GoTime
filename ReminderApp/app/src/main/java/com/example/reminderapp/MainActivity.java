@@ -40,6 +40,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Intent servIntent = new Intent(getApplicationContext(), LocationService.class);
+        getApplicationContext().startService(servIntent);
+
         /*Set up Toolbar, hide default title*/
         this.toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
