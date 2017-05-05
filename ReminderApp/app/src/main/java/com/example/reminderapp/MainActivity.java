@@ -3,12 +3,14 @@ package com.example.reminderapp;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseAdapter dbAdapter;
     private TextView nextEvent;
     private BroadcastReceiver receiver;
+    private BroadcastReceiver deleteReceiver;
 
     private static final String ID = "id";
     private static final String TITLE = "title";
@@ -82,7 +85,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String s = intent.getStringExtra(MESSAGE);
+                Log.d("MAIN", s);
                 nextEvent.setText(fromHtml(s));
+            }
+        };
+
+        deleteReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                updateArray();
             }
         };
 
@@ -99,8 +110,6 @@ public class MainActivity extends AppCompatActivity {
 
 //        this.searchView = (SearchView) findViewById(R.id.event_search);
         this.nextEvent = (TextView) findViewById(R.id.next_event_time);
-
-
 
         this.searchView = (SearchView) findViewById(R.id.event_search);
         this.searchView.setOnClickListener(new View.OnClickListener() {
@@ -125,6 +134,7 @@ public class MainActivity extends AppCompatActivity {
     // Update array when fragment comes back into display
     @Override
     public void onResume() {
+        this.nextEvent.setText(getResources().getString(R.string.calculating));
         updateArray();
         int i = 0;
         while (i < this.eventArrayList.size()) {
@@ -136,6 +146,20 @@ public class MainActivity extends AppCompatActivity {
             i++;
         }
         super.onResume();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        LocalBroadcastManager.getInstance(this).registerReceiver(deleteReceiver, new IntentFilter(LocationService.BROADCAST_DELETE));
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(LocationService.BROADCAST_ACTION));
+    }
+
+    @Override
+    protected void onStop() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(deleteReceiver);
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+        super.onStop();
     }
 
     // Updates the array of displayed lessons

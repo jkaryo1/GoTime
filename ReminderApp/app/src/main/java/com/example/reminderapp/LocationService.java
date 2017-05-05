@@ -26,6 +26,7 @@ import java.util.Calendar;
 public class LocationService extends Service
 {
     public static final String BROADCAST_ACTION = "com.example.reminderapp.LocationService.REQUEST_PROCESSED";
+    public static final String BROADCAST_DELETE = "com.example.reminderapp.LocationService.DELETE_EVENT";
     private static final int TWO_MINUTES = 1000 * 60 * 2;
     public LocationManager locationManager;
     public MyLocationListener listener;
@@ -110,6 +111,8 @@ public class LocationService extends Service
             departTime.setTimeInMillis(cursor.getLong(departIndex));
             // Create event and add to array
             nextEvent = new Event(id, title, date, prepTime, transport, location, placeID, gcalID, departTime);
+        } else {
+            nextEvent = null;
         }
         cursor.close();
     }
@@ -191,9 +194,7 @@ public class LocationService extends Service
      * Updates travel time
      */
     public void updateTime() {
-        Log.d("OUTSIDE_UPDATE", "outside");
         if (nextEvent != null) {
-            Log.d("INSIDE_UPDATE", "inside");
             String origin = "origin=" + previousBestLocation.getLatitude() + "," + previousBestLocation.getLongitude();
             String destination = "destination=place_id:" + nextEvent.placeID;
             String mode = "mode=" + nextEvent.transport.toLowerCase();
@@ -202,15 +203,14 @@ public class LocationService extends Service
         } else {
             Intent intent = new Intent(BROADCAST_ACTION);
             intent.putExtra(MESSAGE, "No events");
+            Log.d("HELLO", "No events");
             broadcaster.sendBroadcast(intent);
         }
     }
 
     public void sendTime() {
         Intent intent = new Intent(BROADCAST_ACTION);
-        Log.d("OUTSIDE_SEND", "outside send");
         if (travelTime != null) {
-            Log.d("INSIDE_SEND", "inside send");
             Calendar currTime = Calendar.getInstance();
             long calTime = currTime.getTimeInMillis() / 1000;
             long eventTime = nextEvent.date.getTimeInMillis() / 1000;
@@ -224,22 +224,26 @@ public class LocationService extends Service
             } else if ((timeDiff += travelTime) > 0) {
                 message += "Time until event: ";
             } else {
+                Intent deleteIntent = new Intent(BROADCAST_DELETE);
                 dbAdapter.removeItem(nextEvent.id);
                 getNextEvent();
+                broadcaster.sendBroadcast(deleteIntent);
             }
-            String openColor = "<font color='#";
-            //noinspection ResourceType
-            String color = getResources().getString(R.color.colorGreen).substring(3);
-            String closeColor = "'>";
-            String time = (int)(timeDiff / 60) + " minutes";
-            String finish = "</font>";
-            message += openColor + color + closeColor + time + finish;
-            Log.d("MESSAGE", message);
-            intent.putExtra(MESSAGE, message);
-        } else {
-            intent.putExtra(MESSAGE, "No events");
+            if (timeDiff >= 0) {
+                String openColor = "<font color='#";
+                //noinspection ResourceType
+                String color = getResources().getString(R.color.colorGreen).substring(3);
+                String closeColor = "'>";
+                String time = (int) Math.ceil(timeDiff / 60d) + " minutes";
+                String finish = "</font>";
+                message += openColor + color + closeColor + time + finish;
+                Log.d("MESSAGE", message);
+                intent.putExtra(MESSAGE, message);
+            } else {
+                intent.putExtra(MESSAGE, getResources().getString(R.string.calculating));
+            }
+            broadcaster.sendBroadcast(intent);
         }
-        broadcaster.sendBroadcast(intent);
     }
 
     private class MyLocationListener implements LocationListener
@@ -249,7 +253,6 @@ public class LocationService extends Service
             Log.i("***********************", "Location changed");
             if(isBetterLocation(loc, previousBestLocation)) {
                 previousBestLocation = loc;
-                Log.d("LISTENER", "listener");
                 getNextEvent();
                 updateTime();
             }
@@ -257,12 +260,12 @@ public class LocationService extends Service
 
         public void onProviderDisabled(String provider)
         {
-            Toast.makeText( getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT ).show();
+//            Toast.makeText( getApplicationContext(), "Gps Disabled", Toast.LENGTH_SHORT ).show();
         }
 
         public void onProviderEnabled(String provider)
         {
-            Toast.makeText( getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
+//            Toast.makeText( getApplicationContext(), "Gps Enabled", Toast.LENGTH_SHORT).show();
         }
 
         public void onStatusChanged(String provider, int status, Bundle extras)
@@ -301,7 +304,6 @@ public class LocationService extends Service
                 JSONObject route1 = json.getJSONArray("routes").getJSONObject(0);
                 JSONObject leg1 = route1.getJSONArray("legs").getJSONObject(0);
                 JSONObject duration = leg1.getJSONObject("duration");
-                Log.d("DURATION_TIME", String.valueOf(duration.getInt("value")));
 
                 return duration.getInt("value");
 
@@ -317,7 +319,6 @@ public class LocationService extends Service
         protected void onPostExecute(Integer result) {
 //            nextEvent.setText(result.toString());
             travelTime = result;
-            Log.d("POST", String.valueOf(travelTime));
             sendTime();
         }
     }
