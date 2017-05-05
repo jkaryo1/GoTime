@@ -35,3 +35,7 @@ The WorkaroundMapFragment.java class, as well as its basic implementation, was
 modeled after Alok Nair's post on StackOverflow regarding enabling vertical map
 movement within a scrollview.
 http://stackoverflow.com/questions/30525066/how-to-set-google-map-fragment-inside-scroll-view
+
+The location service is based off of Usman Kurd and Sufian's posts on
+StackOverflow.
+http://stackoverflow.com/questions/14478179/background-service-with-location-listener-in-android

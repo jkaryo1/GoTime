@@ -19,6 +19,16 @@ class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
     private int colors[];
 
+    private static final String ID = "id";
+    private static final String TITLE = "title";
+    private static final String DATE = "date";
+    private static final String PREP_TIME = "prep_time";
+    private static final String TRANSPORT = "transport";
+    private static final String LOCATION = "location";
+    private static final String PLACE_ID = "place_id";
+    private static final String GCAL_ID = "gcal_id";
+    private static final String DEPART_TIME = "depart_time";
+
     // Set array and context, and initialize colors array
     EventListAdapter(ArrayList<Object> list, Context c) {
         this.eventList = list;
@@ -93,12 +103,15 @@ class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 public void onClick(View v) {
                     Intent intent = new Intent(context, EventActivity.class);
                     intent.putExtra("EXISTING_EVENT", true);
-                    intent.putExtra("ID", event.id);
-                    intent.putExtra("TITLE", event.title);
-                    intent.putExtra("DATE", event.date.getTimeInMillis());
-                    intent.putExtra("PREP_TIME", event.prepTime);
-                    intent.putExtra("TRANSPORT", event.transport);
-                    intent.putExtra("LOCATION", event.location);
+                    intent.putExtra(ID, event.id);
+                    intent.putExtra(TITLE, event.title);
+                    intent.putExtra(DATE, event.date.getTimeInMillis());
+                    intent.putExtra(PREP_TIME, event.prepTime);
+                    intent.putExtra(TRANSPORT, event.transport);
+                    intent.putExtra(LOCATION, event.location);
+                    intent.putExtra(PLACE_ID, event.placeID);
+                    intent.putExtra(GCAL_ID, event.gcalID);
+                    intent.putExtra(DEPART_TIME, event.departTime.getTimeInMillis());
                     context.startActivity(intent);
                     ((Activity) context).overridePendingTransition(R.transition.enter, R.transition.stack);
                 }
@@ -112,20 +125,9 @@ class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             eventTitle.setText(event.title);
             eventTime.setText(event.getTime());
             eventLocation.setText(event.location);
-            if (colors[position] == 0) {
-                if (position == 1) {
-                    colors[position] = 1;
-                } else if (colors[position - 1] == 0) {
-                    colors[position] = (colors[position - 2] % 2) + 1;
-                } else {
-                    colors[position] = colors[position - 1];
-                }
-            }
-            if (colors[position] == 1) {
-                cardView.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.darkerCard), PorterDuff.Mode.SRC_IN);
-            } else {
-                cardView.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.lighterCard), PorterDuff.Mode.SRC_IN);
-            }
+
+            cardView.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.lighterCard), PorterDuff.Mode.SRC_IN);
+
         }
     }
     private class DividerHolder extends RecyclerView.ViewHolder {

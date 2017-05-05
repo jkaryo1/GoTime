@@ -35,14 +35,14 @@
             <EditText
                 style="@style/EditTextRounded"
                 android:id="@+id/title_input"
-                android:hint="@string/titleHint"
                 android:inputType="text"
                 android:maxLines="1"
                 android:cursorVisible="false"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:longClickable="false"
-                android:imeOptions="actionDone"/>
+                android:imeOptions="actionDone"
+                android:hint="@string/titleLabel"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -53,7 +53,7 @@
                 style="@style/EditTextRounded"
                 android:id="@+id/date"
                 android:focusableInTouchMode="false"
-                android:hint="@string/dateHint" />
+                android:hint="@string/dateHint"/>
 
             <TextView
                 android:layout_width="match_parent"
@@ -101,6 +101,7 @@
                 android:paddingStart="0dp"
                 android:background="@drawable/edit_text_field">
                 <Spinner
+                    android:theme="@style/SpinnerStyle"
                     android:id="@+id/transport_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -122,32 +123,13 @@
                 android:layout_height="match_parent"
                 android:text="@string/locLabel" />
 
-            <!--<EditText-->
-                <!--android:id="@+id/loc_input"-->
-                <!--style="@style/EditTextRounded"-->
-                <!--android:hint="@string/locHint"-->
-                <!--android:inputType="text"-->
-                <!--android:maxLines="1"-->
-                <!--android:cursorVisible="false"-->
-                <!--android:focusable="true"-->
-                <!--android:focusableInTouchMode="true"-->
-                <!--android:longClickable="false"-->
-                <!--android:imeOptions="actionDone" />-->
             <fragment
-                android:layout_marginBottom="5dp"
+                android:layout_marginBottom="10dp"
                 android:id="@+id/place_autocomplete_fragment"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-                />
+                android:layout_height="38dp"
+                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment" />
 
-            <!--<ImageView-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="200dp"-->
-                <!--android:layout_marginTop="5dp"-->
-                <!--android:layout_marginBottom="5dp"-->
-                <!--android:src="@drawable/hopkins_map"-->
-                <!--android:contentDescription="@string/down_arrow" />-->
             <fragment xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:map="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
@@ -156,7 +138,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 tools:context="com.example.reminderapp.EventActivity" />
-
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -179,7 +160,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
-
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

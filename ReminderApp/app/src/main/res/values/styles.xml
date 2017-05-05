@@ -37,16 +37,23 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/darkGray</item>
+        <item name="android:textColorHint">@color/midGray</item>
     </style>
 
     <style name="TextViewStyle">
         <item name="android:paddingLeft">7dp</item>
         <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:textColor">@color/diffPurple</item>
     </style>
 
     <style name="AddEventTheme" parent="AppTheme">
         <item name="android:textViewStyle">@style/TextViewStyle</item>
+    </style>
+
+    <style name="SpinnerStyle" parent="AppTheme">
+        <item name="android:textColor">@color/darkGray</item>
+        <item name="android:textSize">18sp</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

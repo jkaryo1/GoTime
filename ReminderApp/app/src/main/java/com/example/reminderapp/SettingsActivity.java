@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
@@ -12,7 +13,6 @@ import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.ButtonBarLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.View;
@@ -24,6 +24,11 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class SettingsActivity extends AppCompatActivity {
     private Toolbar toolbar;
@@ -60,13 +65,10 @@ public class SettingsActivity extends AppCompatActivity {
         this.transportLayout = (RelativeLayout) findViewById(R.id.transport_spinner_view);
         this.saveButton = (Button) findViewById(R.id.save_button);
         this.cancelButton = (Button) findViewById(R.id.cancel_button);
-        this.defaultPrepTime.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
-        this.transportLayout.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
-        this.alarmLayout.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.gray), PorterDuff.Mode.SRC_ATOP);
         this.saveButton.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
 
         /*Setting upp the SharedPreferences object*/
-        Context context = SettingsActivity.this;
+        final Context context = SettingsActivity.this;
         this.sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
 
         this.alarmSpinner = (Spinner) alarmLayout.findViewById(R.id.alarm_spinner);
@@ -93,6 +95,8 @@ public class SettingsActivity extends AppCompatActivity {
                                 peditor.putInt("ALARM_TYPE", alarmSpinner.getSelectedItemPosition());
                                 peditor.putInt("TRANSPORT_TYPE", transportSpinner.getSelectedItemPosition());
                                 peditor.apply();
+                                finish();
+                                overridePendingTransition(R.transition.unstack, R.transition.exit);
                                 Toast.makeText(getApplicationContext(), "Settings updated", Toast.LENGTH_SHORT).show();
                             }
                         })
@@ -114,7 +118,8 @@ public class SettingsActivity extends AppCompatActivity {
                         .setIcon(icon)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
-                                autofill();
+                                finish();
+                                overridePendingTransition(R.transition.unstack, R.transition.exit);
                                 Toast.makeText(activity, "Changes cancelled", Toast.LENGTH_SHORT).show();
                             }
                         })
@@ -132,9 +137,22 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    defaultPrepTime.performClick();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        v.setBackground(ContextCompat.getDrawable(context, R.drawable.edit_text_highlighted));
+                    } else {
+                        //noinspection deprecation
+                        v.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.edit_text_highlighted));
+                    }
+                    v.performClick();
                 } else {
                     hideKeyboard(v);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        v.setBackground(ContextCompat.getDrawable(context, R.drawable.edit_text_field));
+                    } else {
+                        //noinspection deprecation
+                        v.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.edit_text_field));
+                    }
+                    v.clearFocus();
                 }
             }
         });
@@ -174,5 +192,43 @@ public class SettingsActivity extends AppCompatActivity {
 
         final InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+    }
+
+    public String getDistance(String method, String placeID) {
+        String API_KEY = getResources().getString(R.string.google_maps_key);
+
+        //Eventually change this to get current location, this is Nolans on 33rd
+        String origin = "place_id:ChIJNwXfIuAEyIkRMlSZouZry18";
+
+        method = method.toLowerCase();
+
+        String url = "https://maps.googleapis.com/maps/api/directions/json?origin="
+                + origin + "&destination=place_id:" + placeID + "&mode=" + method + "&key=" + API_KEY;
+        try {
+            URL google = new URL(url);
+            HttpURLConnection conn = (HttpURLConnection) google.openConnection();
+            conn.setConnectTimeout(60000);
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String inputLine;
+
+            String out = "";
+            while ((inputLine = in.readLine()) != null) {
+                System.out.println(inputLine);
+                if (inputLine.contains("duration")) {
+                    inputLine = in.readLine();
+                    int index = inputLine.indexOf(":");
+                    index += 2;
+                    out = inputLine.substring(index);
+                    break;
+                }
+            }
+            out = out.substring(0, out.length()-1);
+            in.close();
+            return out;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
