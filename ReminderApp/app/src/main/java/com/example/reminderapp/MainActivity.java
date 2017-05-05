@@ -135,15 +135,6 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         this.nextEvent.setText(getResources().getString(R.string.calculating));
         updateArray();
-        int i = 0;
-        while (i < this.eventArrayList.size()) {
-            Event e = (Event) this.eventArrayList.get(i);
-            if (i == 0 || !e.getDate().equals(((Event) this.eventArrayList.get(i - 1)).getDate())) {
-                this.eventArrayList.add(i, e.getDate());
-                i++;
-            }
-            i++;
-        }
         super.onResume();
     }
 
@@ -197,6 +188,15 @@ public class MainActivity extends AppCompatActivity {
             } while (cursor.moveToNext());
         }
         cursor.close();
+        int i = 0;
+        while (i < this.eventArrayList.size()) {
+            Event e = (Event) this.eventArrayList.get(i);
+            if (i == 0 || !e.getDate().equals(((Event) this.eventArrayList.get(i - 1)).getDate())) {
+                this.eventArrayList.add(i, e.getDate());
+                i++;
+            }
+            i++;
+        }
         // Tell adapter to update info
         this.adapter.notifyDataSetChanged();
     }
