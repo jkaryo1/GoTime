@@ -289,17 +289,21 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                 }
                 dateView.requestFocus();
                 String dateString = dateView.getText().toString() + " " + timeView.getText().toString();
-                SimpleDateFormat combined = new SimpleDateFormat(DATE_FORMAT + " " + TIME_FORMAT, Locale.getDefault());
-                Calendar pickerDate = Calendar.getInstance();
-                pickerDate.clear();
-                try {
-                    pickerDate.setTime(combined.parse(dateString));
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                if (dateString.length() < 4) {
+                    new DatePickerDialog(dateView.getContext(), date, myCalendar.get(Calendar.YEAR),
+                            myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                } else {
+                    SimpleDateFormat combined = new SimpleDateFormat(DATE_FORMAT + " " + TIME_FORMAT, Locale.getDefault());
+                    Calendar pickerDate = Calendar.getInstance();
+                    pickerDate.clear();
+                    try {
+                        pickerDate.setTime(combined.parse(dateString));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    new DatePickerDialog(dateView.getContext(), date, pickerDate.get(Calendar.YEAR),
+                            pickerDate.get(Calendar.MONTH), pickerDate.get(Calendar.DAY_OF_MONTH)).show();
                 }
-                new DatePickerDialog(dateView.getContext(), date, pickerDate.get(Calendar.YEAR),
-                        pickerDate.get(Calendar.MONTH), pickerDate.get(Calendar.DAY_OF_MONTH)).show();
-
             }
         });
 
@@ -311,18 +315,22 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                     getCurrentFocus().clearFocus();
                 }
                 timeView.requestFocus();
-                String dateString = dateView.getText().toString() + " " + timeView.getText().toString();
-                SimpleDateFormat combined = new SimpleDateFormat(DATE_FORMAT + " " + TIME_FORMAT, Locale.getDefault());
-                Calendar date = Calendar.getInstance();
-                date.clear();
-                try {
-                    date.setTime(combined.parse(dateString));
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                String dateString = timeView.getText().toString();
+                if (dateString.length() == 0) {
+                    new TimePickerDialog(dateView.getContext(), time, myCalendar.get(Calendar.HOUR_OF_DAY),
+                            myCalendar.get(Calendar.MINUTE), false).show();
+                } else {
+                    SimpleDateFormat timeFormat = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault());
+                    Calendar date = Calendar.getInstance();
+                    date.clear();
+                    try {
+                        date.setTime(timeFormat.parse(dateString));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    new TimePickerDialog(timeView.getContext(), time, date.get(Calendar.HOUR_OF_DAY),
+                            date.get(Calendar.MINUTE), false).show();
                 }
-                new TimePickerDialog(timeView.getContext(), time, date.get(Calendar.HOUR_OF_DAY),
-                        date.get(Calendar.MINUTE),false).show();
-
             }
         });
 

@@ -75,8 +75,8 @@ public class LocationService extends Service
 
         listener = new MyLocationListener();
         try {
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, listener);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, listener);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, -1, listener);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, -1, listener);
         } catch (SecurityException e) {
             e.printStackTrace();
         }
