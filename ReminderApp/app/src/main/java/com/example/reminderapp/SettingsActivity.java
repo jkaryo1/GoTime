@@ -91,7 +91,12 @@ public class SettingsActivity extends AppCompatActivity {
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 SharedPreferences.Editor peditor = sharedPref.edit();
-                                peditor.putInt("PREP_TIME", Integer.parseInt(defaultPrepTime.getText().toString()));
+                                String prepTime = defaultPrepTime.getText().toString();
+                                int spaceIndex = prepTime.indexOf(" ");
+                                if (spaceIndex != -1) {
+                                    prepTime = prepTime.substring(0, spaceIndex);
+                                }
+                                peditor.putInt("PREP_TIME", Integer.parseInt(prepTime));
                                 peditor.putInt("ALARM_TYPE", alarmSpinner.getSelectedItemPosition());
                                 peditor.putInt("TRANSPORT_TYPE", transportSpinner.getSelectedItemPosition());
                                 peditor.apply();
@@ -143,6 +148,12 @@ public class SettingsActivity extends AppCompatActivity {
                         //noinspection deprecation
                         v.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.edit_text_highlighted));
                     }
+                    String text = defaultPrepTime.getText().toString();
+                    int spaceIndex = text.indexOf(" ");
+                    if (spaceIndex != -1) {
+                        text = text.substring(0, spaceIndex);
+                        defaultPrepTime.setText(text);
+                    }
                     v.performClick();
                 } else {
                     hideKeyboard(v);
@@ -173,8 +184,13 @@ public class SettingsActivity extends AppCompatActivity {
         int prepTime = this.sharedPref.getInt("PREP_TIME", 15);
         int alarmType = this.sharedPref.getInt("ALARM_TYPE", 0);
         int transportType = this.sharedPref.getInt("TRANSPORT_TYPE", 0);
-
-        this.defaultPrepTime.setText(String.valueOf(prepTime));
+        String prepText = prepTime + "";
+        if (prepTime == 1) {
+            prepText += " minute";
+        } else {
+            prepText += " minutes";
+        }
+        this.defaultPrepTime.setText(prepText);
         this.alarmSpinner.setSelection(alarmType);
         this.transportSpinner.setSelection(transportType);
     }
@@ -189,46 +205,18 @@ public class SettingsActivity extends AppCompatActivity {
     public void hideKeyboard(View v) {
         this.defaultPrepTime.setCursorVisible(false);
         this.defaultPrepTime.clearFocus();
+        String text = this.defaultPrepTime.getText().toString();
+        int spaceIndex = text.indexOf(" ");
+        if (spaceIndex == -1) {
+            if (text.equals("1")) {
+                text += " minute";
+            } else {
+                text += " minutes";
+            }
+            this.defaultPrepTime.setText(text);
+        }
 
         final InputMethodManager imm = (InputMethodManager) this.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-    }
-
-    public String getDistance(String method, String placeID) {
-        String API_KEY = getResources().getString(R.string.google_maps_key);
-
-        //Eventually change this to get current location, this is Nolans on 33rd
-        String origin = "place_id:ChIJNwXfIuAEyIkRMlSZouZry18";
-
-        method = method.toLowerCase();
-
-        String url = "https://maps.googleapis.com/maps/api/directions/json?origin="
-                + origin + "&destination=place_id:" + placeID + "&mode=" + method + "&key=" + API_KEY;
-        try {
-            URL google = new URL(url);
-            HttpURLConnection conn = (HttpURLConnection) google.openConnection();
-            conn.setConnectTimeout(60000);
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String inputLine;
-
-            String out = "";
-            while ((inputLine = in.readLine()) != null) {
-                System.out.println(inputLine);
-                if (inputLine.contains("duration")) {
-                    inputLine = in.readLine();
-                    int index = inputLine.indexOf(":");
-                    index += 2;
-                    out = inputLine.substring(index);
-                    break;
-                }
-            }
-            out = out.substring(0, out.length()-1);
-            in.close();
-            return out;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

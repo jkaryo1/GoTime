@@ -1,5 +1,6 @@
 package com.example.reminderapp;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -216,7 +217,13 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             this.titleInput.setText(this.event.title);
             this.dateView.setText(this.event.getDate());
             this.timeView.setText(this.event.getTime());
-            this.prepTimeInput.setText(String.valueOf(this.event.prepTime));
+            String prepText = prepTime + "";
+            if (prepTime == 1) {
+                prepText += " minute";
+            } else {
+                prepText += " minutes";
+            }
+            this.prepTimeInput.setText(prepText);
             this.autocompleteFragment.setText(this.event.location);
 
 
@@ -237,7 +244,13 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             int prepTime = sharedPref.getInt("PREP_TIME", 15);
             int transportType = sharedPref.getInt("TRANSPORT_TYPE", 0);
             title.setText(R.string.add_event);
-            this.prepTimeInput.setText(String.valueOf(prepTime));
+            String prepText = prepTime + "";
+            if (prepTime == 1) {
+                prepText += " minute";
+            } else {
+                prepText += " minutes";
+            }
+            this.prepTimeInput.setText(prepText);
             this.transportMethod.setSelection(transportType);
         }
 
@@ -275,8 +288,17 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                     getCurrentFocus().clearFocus();
                 }
                 dateView.requestFocus();
-                new DatePickerDialog(dateView.getContext(), date, myCalendar.get(Calendar.YEAR),
-                        myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                String dateString = dateView.getText().toString() + " " + timeView.getText().toString();
+                SimpleDateFormat combined = new SimpleDateFormat(DATE_FORMAT + " " + TIME_FORMAT, Locale.getDefault());
+                Calendar pickerDate = Calendar.getInstance();
+                pickerDate.clear();
+                try {
+                    pickerDate.setTime(combined.parse(dateString));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                new DatePickerDialog(dateView.getContext(), date, pickerDate.get(Calendar.YEAR),
+                        pickerDate.get(Calendar.MONTH), pickerDate.get(Calendar.DAY_OF_MONTH)).show();
 
             }
         });
@@ -289,8 +311,17 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                     getCurrentFocus().clearFocus();
                 }
                 timeView.requestFocus();
-                new TimePickerDialog(timeView.getContext(), time, myCalendar.get(Calendar.HOUR_OF_DAY),
-                        myCalendar.get(Calendar.MINUTE),false).show();
+                String dateString = dateView.getText().toString() + " " + timeView.getText().toString();
+                SimpleDateFormat combined = new SimpleDateFormat(DATE_FORMAT + " " + TIME_FORMAT, Locale.getDefault());
+                Calendar date = Calendar.getInstance();
+                date.clear();
+                try {
+                    date.setTime(combined.parse(dateString));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                new TimePickerDialog(timeView.getContext(), time, date.get(Calendar.HOUR_OF_DAY),
+                        date.get(Calendar.MINUTE),false).show();
 
             }
         });
@@ -484,6 +515,14 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                         //noinspection deprecation
                         et.setBackgroundDrawable(ContextCompat.getDrawable(context, R.drawable.edit_text_highlighted));
                     }
+                    if (et.getId() == R.id.prep_time) {
+                        String text = et.getText().toString();
+                        int spaceIndex = text.indexOf(" ");
+                        if (spaceIndex != -1) {
+                            text = text.substring(0, spaceIndex);
+                            et.setText(text);
+                        }
+                    }
                     et.performClick();
                 } else {
                     hideKeyboard(v, et);
@@ -512,6 +551,19 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
 
     // Dismiss keyboard, control cursor behavior
     public void hideKeyboard(View v, EditText et) {
+        if (et.getId() == R.id.prep_time) {
+            String text = et.getText().toString();
+            int spaceIndex = text.indexOf(" ");
+            if (spaceIndex == -1) {
+                if (text.equals("1")) {
+                    text += " minute";
+                } else {
+                    text += " minutes";
+                }
+                et.setText(text);
+            }
+        }
+
         et.setCursorVisible(false);
         et.clearFocus();
 
@@ -545,7 +597,9 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             Calendar date = Calendar.getInstance();
             date.clear();
             date.setTime(combined.parse(dateString));
-            int prepTime = Integer.parseInt(this.prepTimeInput.getText().toString());
+            String prepTimeString = this.prepTimeInput.getText().toString();
+            int spaceIndex = prepTimeString.indexOf(" ");
+            int prepTime = Integer.parseInt(prepTimeString.substring(0, spaceIndex));
             String transport = this.transportMethod.getSelectedItem().toString();
             /*Need to catch case where this.placeIdInput is null*/
 
@@ -569,7 +623,9 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             Calendar date = Calendar.getInstance();
             date.clear();
             date.setTime(combined.parse(dateString));
-            int prepTime = Integer.parseInt(this.prepTimeInput.getText().toString());
+            String prepTimeString = this.prepTimeInput.getText().toString();
+            int spaceIndex = prepTimeString.indexOf(" ");
+            int prepTime = Integer.parseInt(prepTimeString.substring(0, spaceIndex));
             String transport = this.transportMethod.getSelectedItem().toString();
             /*Need to catch case where this.placeIdInput is null*/
 

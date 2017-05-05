@@ -253,11 +253,11 @@ public class LocationService extends Service
                 int numberOfMinutes;
                 numberOfDays = time / 86400;
                 numberOfHours = (time % 86400 ) / 3600 ;
-                numberOfMinutes = ((time % 86400 ) % 3600 ) / 60;
+                numberOfMinutes = (int) Math.ceil(((time % 86400 ) % 3600 ) / 60d);
 
                 String timeString = "";
                 if (numberOfDays > 0) {
-                    String days = "day";
+                    String days = " day";
                     if (numberOfDays != 1) {
                         days += "s";
                     }
@@ -267,7 +267,7 @@ public class LocationService extends Service
                     if (timeString.length() > 0) {
                         timeString += ", ";
                     }
-                    String hours = "hour";
+                    String hours = " hr";
                     if (numberOfHours != 1) {
                         hours += "s";
                     }
@@ -277,7 +277,7 @@ public class LocationService extends Service
                     if (timeString.length() > 0) {
                         timeString += ", ";
                     }
-                    String minutes = "minute";
+                    String minutes = " min";
                     if (numberOfMinutes != 1) {
                         minutes += "s";
                     }
