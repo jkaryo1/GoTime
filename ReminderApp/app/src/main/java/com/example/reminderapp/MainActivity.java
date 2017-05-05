@@ -3,6 +3,8 @@ package com.example.reminderapp;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -13,15 +15,26 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -65,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         String full = base + openColor + color + closeColor + time + finish;
         this.nextEvent.setText(fromHtml(full));
 
+
         this.searchView = (SearchView) findViewById(R.id.event_search);
         this.searchView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +106,19 @@ public class MainActivity extends AppCompatActivity {
         //the place id is "Char-Mar"
         //String message = getDistance("walking", "ChIJSegyHuAEyIkRs5URF4j8D18");
        // System.out.println(message);
+
+        Button testButton = (Button) findViewById(R.id.test_button);
+
+        testButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                String urlStr = "https://maps.googleapis.com/maps/api/directions/json?origin=place_id:ChIJNwXfIuAEyIkRMlSZouZry18&destination=place_id:ChIJRVY_etDX3IARGYLVpoq7f68&mode=DRIVING&key=AIzaSyBtH-O0z7HEEjoTxdTnvU6KH2yJxnmmBRw";
+
+                new DirectionsDownload().execute(urlStr);
+
+            }
+        });
 
     }
 
@@ -166,41 +193,56 @@ public class MainActivity extends AppCompatActivity {
         return result;
     }
 
-    public String getDistance(String method, String placeID) {
-        String API_KEY = getResources().getString(R.string.google_maps_key);
+    private class DirectionsDownload extends AsyncTask<String, Integer, Integer> {
 
-        //Eventually change this to get current location, this is Nolans on 33rd
-        String origin = "place_id:ChIJNwXfIuAEyIkRMlSZouZry18";
+        @Override
+        protected Integer doInBackground(String... urls) {
+            try {
+                URL url = new URL(urls[0]);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                StringBuffer response = new StringBuffer();
 
-        method = method.toLowerCase();
+                int responseCode = conn.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
-        String url = "https://maps.googleapis.com/maps/api/directions/json?origin="
-                + origin + "&destination=place_id:" + placeID + "&mode=" + method + "&key=" + API_KEY;
-        try {
-            URL google = new URL(url);
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(
-                            google.openStream()));
-            String inputLine;
+                    String inputLine;
 
-            String out = "";
-            while ((inputLine = in.readLine()) != null) {
-                System.out.println(inputLine);
-                if (inputLine.contains("duration")) {
-                    inputLine = in.readLine();
-                    int index = inputLine.indexOf(":");
-                    index += 2;
-                    out = inputLine.substring(index);
-                    break;
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+
+                    in.close();
+                } else {
+                    Log.d("fuck","fuck");
+                    response.append("fuck");
                 }
+
+                JSONObject json = new JSONObject(response.toString());
+                JSONObject route1 = json.getJSONArray("routes").getJSONObject(0);
+                JSONObject leg1 = route1.getJSONArray("legs").getJSONObject(0);
+                JSONObject duration = leg1.getJSONObject("duration");
+
+                return duration.getInt("value");
+
+
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            out = out.substring(0, out.length()-1);
-            in.close();
-            return out;
-        } catch (Exception e) {
-            e.printStackTrace();
+
+
+            return -1;
         }
-        return null;
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            nextEvent.setText(result.toString());
+
+        }
     }
+
+
 
 }
