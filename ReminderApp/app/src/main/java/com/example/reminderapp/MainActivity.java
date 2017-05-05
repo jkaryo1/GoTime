@@ -85,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String s = intent.getStringExtra(MESSAGE);
-                Log.d("MAIN", s);
                 nextEvent.setText(fromHtml(s));
             }
         };

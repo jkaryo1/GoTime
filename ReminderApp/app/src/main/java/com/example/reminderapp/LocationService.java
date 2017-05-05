@@ -203,7 +203,6 @@ public class LocationService extends Service
         } else {
             Intent intent = new Intent(BROADCAST_ACTION);
             intent.putExtra(MESSAGE, "No events");
-            Log.d("HELLO", "No events");
             broadcaster.sendBroadcast(intent);
         }
     }
@@ -237,7 +236,6 @@ public class LocationService extends Service
                 String time = (int) Math.ceil(timeDiff / 60d) + " minutes";
                 String finish = "</font>";
                 message += openColor + color + closeColor + time + finish;
-                Log.d("MESSAGE", message);
                 intent.putExtra(MESSAGE, message);
             } else {
                 intent.putExtra(MESSAGE, getResources().getString(R.string.calculating));
