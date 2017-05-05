@@ -2,6 +2,7 @@ package com.example.reminderapp;
 
 import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
 import android.graphics.PorterDuff;
@@ -12,11 +13,15 @@ import android.net.Uri;
 import android.os.PowerManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v4.app.NotificationCompat;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 import android.content.Context;
 import android.content.BroadcastReceiver;
 import android.content.Intent;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class Alarm extends BroadcastReceiver {
     @Override
@@ -50,12 +55,12 @@ public class Alarm extends BroadcastReceiver {
         if (icon != null) {
             icon.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
         }
-        // Create confirmation dialog
-        // On confirm, revert changes and create Toast
-        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
 
-        if (alertDialog.getWindow() != null) {
-            alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+        Window window;
+
+        if ((window = alertDialog.getWindow()) != null) {
+            window.setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         }
 
         alertDialog.setTitle("It's GoTime!");
