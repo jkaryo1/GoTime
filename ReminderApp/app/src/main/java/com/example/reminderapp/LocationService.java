@@ -247,9 +247,44 @@ public class LocationService extends Service
                 //noinspection ResourceType
                 String color = getResources().getString(R.color.colorGreen).substring(3);
                 String closeColor = "'>";
-                String time = (int) Math.ceil(timeDiff / 60d) + " minutes";
+                int time = (int) timeDiff;
+                int numberOfDays;
+                int numberOfHours;
+                int numberOfMinutes;
+                numberOfDays = time / 86400;
+                numberOfHours = (time % 86400 ) / 3600 ;
+                numberOfMinutes = ((time % 86400 ) % 3600 ) / 60;
+
+                String timeString = "";
+                if (numberOfDays > 0) {
+                    String days = "day";
+                    if (numberOfDays != 1) {
+                        days += "s";
+                    }
+                    timeString += numberOfDays + days;
+                }
+                if (numberOfHours > 0) {
+                    if (timeString.length() > 0) {
+                        timeString += ", ";
+                    }
+                    String hours = "hour";
+                    if (numberOfHours != 1) {
+                        hours += "s";
+                    }
+                    timeString += numberOfHours + hours;
+                }
+                if (numberOfMinutes > 0) {
+                    if (timeString.length() > 0) {
+                        timeString += ", ";
+                    }
+                    String minutes = "minute";
+                    if (numberOfMinutes != 1) {
+                        minutes += "s";
+                    }
+                    timeString += numberOfMinutes + minutes;
+                }
                 String finish = "</font>";
-                message += openColor + color + closeColor + time + finish;
+                message += openColor + color + closeColor + timeString + finish;
                 intent.putExtra(MESSAGE, message);
             } else {
                 intent.putExtra(MESSAGE, getResources().getString(R.string.calculating));
