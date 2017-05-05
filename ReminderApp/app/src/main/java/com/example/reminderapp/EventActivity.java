@@ -226,7 +226,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                 case "Driving":
                     this.transportMethod.setSelection(1);
                     break;
-                case "Biking":
+                case "Bicycling":
                     this.transportMethod.setSelection(2);
                     break;
                 case "Walking": default:

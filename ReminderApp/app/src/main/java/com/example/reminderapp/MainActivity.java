@@ -1,5 +1,7 @@
 package com.example.reminderapp;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
@@ -55,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     private EventListAdapter adapter;
     private DatabaseAdapter dbAdapter;
     private TextView nextEvent;
+    private BroadcastReceiver receiver;
 
     private static final String ID = "id";
     private static final String TITLE = "title";
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String PLACE_ID = "place_id";
     private static final String GCAL_ID = "gcal_id";
     private static final String DEPART_TIME = "depart_time";
+    private static final String MESSAGE = "MESSAGE";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +77,14 @@ public class MainActivity extends AppCompatActivity {
 
         Intent servIntent = new Intent(getApplicationContext(), LocationService.class);
         getApplicationContext().startService(servIntent);
+
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String s = intent.getStringExtra(MESSAGE);
+                nextEvent.setText(fromHtml(s));
+            }
+        };
 
         /*Set up Toolbar, hide default title*/
         this.toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -87,15 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
 //        this.searchView = (SearchView) findViewById(R.id.event_search);
         this.nextEvent = (TextView) findViewById(R.id.next_event_time);
-        String base = "Get ready in: ";
-        String openColor = "<font color='#";
-        //noinspection ResourceType
-        String color = getResources().getString(R.color.colorGreen).substring(3);
-        String closeColor = "'>";
-        String time = "15 minutes";
-        String finish = "</font>";
-        String full = base + openColor + color + closeColor + time + finish;
-        this.nextEvent.setText(fromHtml(full));
+
 
 
         this.searchView = (SearchView) findViewById(R.id.event_search);
