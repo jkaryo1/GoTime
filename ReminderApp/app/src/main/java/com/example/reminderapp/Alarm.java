@@ -5,15 +5,18 @@ import android.app.AlertDialog;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -27,9 +30,9 @@ public class Alarm extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent i) {
 
-
         String title = i.getStringExtra("ALARM_TITLE");
         int type = i.getIntExtra("ALARM_TYPE", 0);
+        int position = i.getIntExtra("ALARM_SOUND", 0);
 
         String message;
 
@@ -45,11 +48,20 @@ public class Alarm extends BroadcastReceiver {
                 break;
         }
 
-        Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-
+        Uri notification;
+        switch (position) {
+            case 0:
+                notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
+                break;
+            case 1:
+                notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALL);
+                break;
+            case 2: default:
+                notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+                break;
+        }
         final Ringtone r = RingtoneManager.getRingtone(context, notification);
         r.play();
-
 
         Drawable icon = ResourcesCompat.getDrawable(context.getResources(), android.R.drawable.ic_dialog_alert, null);
         if (icon != null) {
@@ -74,14 +86,14 @@ public class Alarm extends BroadcastReceiver {
         alertDialog.show();
     }
 
-    public void setAlarm(Context context, int alarmType, String eventTitle, int secondsToAlarm) {
+    public void setAlarm(Context context, int alarmType, String eventTitle, int secondsToAlarm, int sound) {
         Intent intent = new Intent(context, Alarm.class);
         AlarmManager alarmMan = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
 
-
-
         intent.putExtra("ALARM_TYPE", alarmType);
         intent.putExtra("ALARM_TITLE", eventTitle);
+        intent.putExtra("ALARM_SOUND", sound);
+
         PendingIntent pendInt = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
 

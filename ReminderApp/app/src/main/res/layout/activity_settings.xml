@@ -109,18 +109,6 @@
                 android:src="@drawable/ic_down_arrow" />
         </RelativeLayout>
 
-        <ImageButton
-            android:layout_gravity="center"
-            android:layout_marginTop="50dp"
-            android:layout_width="268dp"
-            android:layout_height="49dp"
-            app:srcCompat="@drawable/google_button"
-            android:id="@+id/imageButton2"
-            android:scaleType="centerCrop"
-            android:contentDescription="@string/google_authentication"
-            android:background="@color/white"
-            android:layout_marginBottom="70dp" />
-
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
