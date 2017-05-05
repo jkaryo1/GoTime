@@ -72,7 +72,6 @@ public class LocationService extends Service
     public int onStartCommand(Intent intent, int flags, int startId)
     {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        alarm.setAlarm(this);
 
         listener = new MyLocationListener();
         try {
@@ -227,9 +226,15 @@ public class LocationService extends Service
             long timeDiff = eventTime - calTime - travelTime - prepTime;
             if (timeDiff > 0) {
                 message += "Get ready in: ";
+                alarm.cancelAlarm(this);
+                alarm.setAlarm(this, 2, nextEvent.title, (int) timeDiff);
             } else if ((timeDiff += prepTime) > 0) {
+                alarm.cancelAlarm(this);
+                alarm.setAlarm(this,1,nextEvent.title, (int) timeDiff);
                 message += "Leave in: ";
             } else if ((timeDiff += travelTime) > 0) {
+                alarm.cancelAlarm(this);
+                alarm.setAlarm(this,0,nextEvent.title, (int) timeDiff);
                 message += "Time until event: ";
             } else {
                 Intent deleteIntent = new Intent(BROADCAST_DELETE);

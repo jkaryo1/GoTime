@@ -22,6 +22,24 @@ public class Alarm extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent i) {
 
+
+        String title = i.getStringExtra("ALARM_TITLE");
+        int type = i.getIntExtra("ALARM_TYPE", 0);
+
+        String message;
+
+        switch(type) {
+            case 2:
+                message = "Time to get ready for " + title;
+                break;
+            case 1:
+                message = "Time to leave for " + title;
+                break;
+            case 0: default:
+                message = "Time for " + title;
+                break;
+        }
+
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
 
         final Ringtone r = RingtoneManager.getRingtone(context, notification);
@@ -36,12 +54,12 @@ public class Alarm extends BroadcastReceiver {
         // On confirm, revert changes and create Toast
         AlertDialog alertDialog = new AlertDialog.Builder(context).create();
 
-        alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        if (alertDialog.getWindow() != null) {
+            alertDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        }
 
-
-
-        alertDialog.setTitle("Cancel Changes");
-        alertDialog.setMessage("Are you sure you want to cancel changes?");
+        alertDialog.setTitle("It's GoTime!");
+        alertDialog.setMessage(message);
         alertDialog.setIcon(icon);
         alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Dismiss", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
@@ -49,17 +67,20 @@ public class Alarm extends BroadcastReceiver {
             }
         });
         alertDialog.show();
-
-
-
     }
 
-    public void setAlarm(Context context) {
+    public void setAlarm(Context context, int alarmType, String eventTitle, int secondsToAlarm) {
         Intent intent = new Intent(context, Alarm.class);
         AlarmManager alarmMan = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent pendInt = PendingIntent.getBroadcast(context, 0, intent, 0);
 
-        alarmMan.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 10000, pendInt);
+
+
+        intent.putExtra("ALARM_TYPE", alarmType);
+        intent.putExtra("ALARM_TITLE", eventTitle);
+        PendingIntent pendInt = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
+        alarmMan.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (secondsToAlarm * 1000), pendInt);
     }
 
     public  void cancelAlarm(Context context) {
