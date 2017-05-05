@@ -1,5 +1,6 @@
 package com.example.reminderapp;
 
+import android.app.AlarmManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -37,6 +38,7 @@ public class LocationService extends Service
     // Time to travel to next event from current location in seconds
     private Integer travelTime;
     LocalBroadcastManager broadcaster;
+    private Context context;
 
     private static final String ID = "id";
     private static final String TITLE = "title";
@@ -53,6 +55,8 @@ public class LocationService extends Service
 
     int counter = 0;
 
+    Alarm alarm = new Alarm();
+
     @Override
     public void onCreate()
     {
@@ -61,12 +65,15 @@ public class LocationService extends Service
         this.dbAdapter.open();
         broadcaster = LocalBroadcastManager.getInstance(this);
         getNextEvent();
+        this.context = getApplicationContext();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId)
     {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        alarm.setAlarm(this);
+
         listener = new MyLocationListener();
         try {
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 10000, 0, listener);
@@ -210,6 +217,8 @@ public class LocationService extends Service
     public void sendTime() {
         Intent intent = new Intent(BROADCAST_ACTION);
         if (travelTime != null) {
+            AlarmManager mgrAlarm = (AlarmManager) context.getSystemService(ALARM_SERVICE);
+
             Calendar currTime = Calendar.getInstance();
             long calTime = currTime.getTimeInMillis() / 1000;
             long eventTime = nextEvent.date.getTimeInMillis() / 1000;
