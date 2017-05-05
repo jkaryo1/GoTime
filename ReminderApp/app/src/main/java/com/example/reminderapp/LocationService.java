@@ -135,7 +135,6 @@ public class LocationService extends Service
                 intent.putExtra("Longitude", loc.getLongitude());
                 intent.putExtra("Provider", loc.getProvider());
                 sendBroadcast(intent);
-
             }
         }
 
