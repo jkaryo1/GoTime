@@ -8,12 +8,6 @@
 
     <include layout="@layout/app_bar" />
 
-    <Button
-        android:id="@+id/test_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Test"/>
-
     <android.support.v7.widget.SearchView
         android:id="@+id/event_search"
         android:queryHint="@string/search_events"

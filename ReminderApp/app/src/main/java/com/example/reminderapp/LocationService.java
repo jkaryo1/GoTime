@@ -6,10 +6,18 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
+
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 
 public class LocationService extends Service
@@ -153,4 +161,59 @@ public class LocationService extends Service
 
         }
     }
+
+    private class DirectionsDownload extends AsyncTask<String, Integer, Integer> {
+
+        String urlStr = "https://maps.googleapis.com/maps/api/directions/json?origin=place_id:ChIJNwXfIuAEyIkRMlSZouZry18&destination=place_id:ChIJRVY_etDX3IARGYLVpoq7f68&mode=DRIVING&key=AIzaSyBtH-O0z7HEEjoTxdTnvU6KH2yJxnmmBRw";
+
+        @Override
+        protected Integer doInBackground(String... urls) {
+            try {
+                URL url = new URL(urls[0]);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                StringBuffer response = new StringBuffer();
+
+                int responseCode = conn.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                    String inputLine;
+
+                    while ((inputLine = in.readLine()) != null) {
+                        response.append(inputLine);
+                    }
+
+                    in.close();
+                } else {
+                    Log.d("fuck","fuck");
+                    response.append("fuck");
+                }
+
+                JSONObject json = new JSONObject(response.toString());
+                JSONObject route1 = json.getJSONArray("routes").getJSONObject(0);
+                JSONObject leg1 = route1.getJSONArray("legs").getJSONObject(0);
+                JSONObject duration = leg1.getJSONObject("duration");
+
+                return duration.getInt("value");
+
+
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
+            return -1;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+//            nextEvent.setText(result.toString());
+
+        }
+    }
+
+
+
 }

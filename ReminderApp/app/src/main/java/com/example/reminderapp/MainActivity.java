@@ -113,19 +113,6 @@ public class MainActivity extends AppCompatActivity {
         this.recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
-        Button testButton = (Button) findViewById(R.id.test_button);
-
-        testButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String urlStr = "https://maps.googleapis.com/maps/api/directions/json?origin=place_id:ChIJNwXfIuAEyIkRMlSZouZry18&destination=place_id:ChIJRVY_etDX3IARGYLVpoq7f68&mode=DRIVING&key=AIzaSyBtH-O0z7HEEjoTxdTnvU6KH2yJxnmmBRw";
-
-                new DirectionsDownload().execute(urlStr);
-
-            }
-        });
-
         this.adapter = new EventListAdapter(this.eventArrayList, this);
         recyclerView.setAdapter(this.adapter);
         registerForContextMenu(recyclerView);
@@ -251,56 +238,6 @@ public class MainActivity extends AppCompatActivity {
             result = Html.fromHtml(html);
         }
         return result;
-    }
-
-    private class DirectionsDownload extends AsyncTask<String, Integer, Integer> {
-
-        @Override
-        protected Integer doInBackground(String... urls) {
-            try {
-                URL url = new URL(urls[0]);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                StringBuffer response = new StringBuffer();
-
-                int responseCode = conn.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-                    String inputLine;
-
-                    while ((inputLine = in.readLine()) != null) {
-                        response.append(inputLine);
-                    }
-
-                    in.close();
-                } else {
-                    Log.d("fuck","fuck");
-                    response.append("fuck");
-                }
-
-                JSONObject json = new JSONObject(response.toString());
-                JSONObject route1 = json.getJSONArray("routes").getJSONObject(0);
-                JSONObject leg1 = route1.getJSONArray("legs").getJSONObject(0);
-                JSONObject duration = leg1.getJSONObject("duration");
-
-                return duration.getInt("value");
-
-
-
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-            return -1;
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            nextEvent.setText(result.toString());
-
-        }
     }
 
 
