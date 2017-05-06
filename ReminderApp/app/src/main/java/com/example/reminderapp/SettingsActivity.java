@@ -178,6 +178,7 @@ public class SettingsActivity extends AppCompatActivity {
                 return false;
             }
         });
+
     }
 
     public void autofill() {

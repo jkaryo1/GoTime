@@ -65,6 +65,7 @@ public class Alarm extends BroadcastReceiver {
 
         alertDialog.setTitle("It's GoTime!");
         alertDialog.setMessage(message);
+        alertDialog.setInverseBackgroundForced(false);
         alertDialog.setIcon(icon);
         alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Dismiss", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
