@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
@@ -11,6 +12,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -39,6 +41,7 @@ public class LocationService extends Service
     private Integer travelTime;
     LocalBroadcastManager broadcaster;
     private Context context;
+    private SharedPreferences myPrefs;
 
     private static final String ID = "id";
     private static final String TITLE = "title";
@@ -66,6 +69,7 @@ public class LocationService extends Service
         broadcaster = LocalBroadcastManager.getInstance(this);
         getNextEvent();
         this.context = getApplicationContext();
+        this.myPrefs = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     @Override
@@ -224,17 +228,18 @@ public class LocationService extends Service
             long prepTime = 60 * nextEvent.prepTime;
             String message = "";
             long timeDiff = eventTime - calTime - travelTime - prepTime;
+            Integer sound = myPrefs.getInt("ALARM_TYPE", 0);
             if (timeDiff > 0) {
                 message += "Get ready in: ";
                 alarm.cancelAlarm(this);
-                alarm.setAlarm(this, 2, nextEvent.title, (int) timeDiff);
+                alarm.setAlarm(this, 2, nextEvent.title, (int) timeDiff, sound);
             } else if ((timeDiff += prepTime) > 0) {
                 alarm.cancelAlarm(this);
-                alarm.setAlarm(this,1,nextEvent.title, (int) timeDiff);
+                alarm.setAlarm(this,1,nextEvent.title, (int) timeDiff, sound);
                 message += "Leave in: ";
             } else if ((timeDiff += travelTime) > 0) {
                 alarm.cancelAlarm(this);
-                alarm.setAlarm(this,0,nextEvent.title, (int) timeDiff);
+                alarm.setAlarm(this,0,nextEvent.title, (int) timeDiff, sound);
                 message += "Time until event: ";
             } else {
                 Intent deleteIntent = new Intent(BROADCAST_DELETE);

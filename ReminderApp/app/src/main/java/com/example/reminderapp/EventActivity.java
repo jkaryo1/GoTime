@@ -288,16 +288,16 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                     getCurrentFocus().clearFocus();
                 }
                 dateView.requestFocus();
-                String dateString = dateView.getText().toString() + " " + timeView.getText().toString();
-                if (dateString.length() < 4) {
+                String dateString = dateView.getText().toString();
+                if (dateString.length() == 0) {
                     new DatePickerDialog(dateView.getContext(), date, myCalendar.get(Calendar.YEAR),
                             myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show();
                 } else {
-                    SimpleDateFormat combined = new SimpleDateFormat(DATE_FORMAT + " " + TIME_FORMAT, Locale.getDefault());
+                    SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.getDefault());
                     Calendar pickerDate = Calendar.getInstance();
                     pickerDate.clear();
                     try {
-                        pickerDate.setTime(combined.parse(dateString));
+                        pickerDate.setTime(dateFormat.parse(dateString));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }
@@ -315,8 +315,8 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                     getCurrentFocus().clearFocus();
                 }
                 timeView.requestFocus();
-                String dateString = timeView.getText().toString();
-                if (dateString.length() == 0) {
+                String timeString = timeView.getText().toString();
+                if (timeString.length() == 0) {
                     new TimePickerDialog(dateView.getContext(), time, myCalendar.get(Calendar.HOUR_OF_DAY),
                             myCalendar.get(Calendar.MINUTE), false).show();
                 } else {
@@ -324,7 +324,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                     Calendar date = Calendar.getInstance();
                     date.clear();
                     try {
-                        date.setTime(timeFormat.parse(dateString));
+                        date.setTime(timeFormat.parse(timeString));
                     } catch (ParseException e) {
                         e.printStackTrace();
                     }

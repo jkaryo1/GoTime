@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
 //    private String[] transports = {"Driving", "Walking", "Driving", "Biking", "Walking", "Biking", "Driving", "Biking"};
 //    private String[] locations = {"Location 1", "Location 2", "Location 3", "Location 4", "Location 5", "Location 6", "Location 7", "Location 8"};
     private RecyclerView recyclerView;
-    private SearchView searchView;
+//    private SearchView searchView;
     private EventListAdapter adapter;
     private DatabaseAdapter dbAdapter;
     private TextView nextEvent;
@@ -107,16 +107,15 @@ public class MainActivity extends AppCompatActivity {
         this.dbAdapter = DatabaseAdapter.getInstance(getApplicationContext());
         this.dbAdapter.open();
 
-//        this.searchView = (SearchView) findViewById(R.id.event_search);
         this.nextEvent = (TextView) findViewById(R.id.next_event_time);
 
-        this.searchView = (SearchView) findViewById(R.id.event_search);
-        this.searchView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                searchView.setIconified(false);
-            }
-        });
+//        this.searchView = (SearchView) findViewById(R.id.event_search);
+//        this.searchView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                searchView.setIconified(false);
+//            }
+//        });
 
         this.eventArrayList = new ArrayList<>();
         this.recyclerView = (RecyclerView) findViewById(R.id.event_recycler_view);
