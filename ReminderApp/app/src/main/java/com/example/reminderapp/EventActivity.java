@@ -89,7 +89,6 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
     private static final String LOCATION = "location";
     private static final String PLACE_ID = "place_id";
     private static final String GCAL_ID = "gcal_id";
-    private static final String DEPART_TIME = "depart_time";
 
     private static final String TIME_FORMAT = "h:mm a"; //In which you need put here
     private static final SimpleDateFormat stf = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault());
@@ -210,10 +209,9 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             String location = intent.getStringExtra(LOCATION);
             String placeID = intent.getStringExtra(PLACE_ID);
             String gcalID = intent.getStringExtra(GCAL_ID);
-            long departTime = intent.getLongExtra(DEPART_TIME, 0);
             this.placeNameInput = location;
             this.placeIdInput = placeID;
-            this.event = new Event(id, title, dateMillis, prepTime, transport, location, placeID, gcalID, departTime);
+            this.event = new Event(id, title, dateMillis, prepTime, transport, location, placeID, gcalID);
             this.titleInput.setText(this.event.title);
             this.dateView.setText(this.event.getDate());
             this.timeView.setText(this.event.getTime());
@@ -562,7 +560,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         if (et.getId() == R.id.prep_time) {
             String text = et.getText().toString();
             int spaceIndex = text.indexOf(" ");
-            if (spaceIndex == -1) {
+            if (spaceIndex == -1 && !text.equals("")) {
                 if (text.equals("1")) {
                     text += " minute";
                 } else {
@@ -612,7 +610,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             /*Need to catch case where this.placeIdInput is null*/
 
 
-            Event newEvent = new Event(id, title, date, prepTime, transport, placeNameInput,placeIdInput,"nullgcalEvent",date);
+            Event newEvent = new Event(id, title, date, prepTime, transport, placeNameInput,placeIdInput,"nullgcalEvent");
             this.dbAdapter.updateLesson((long) id, newEvent);
 
 
@@ -637,7 +635,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             String transport = this.transportMethod.getSelectedItem().toString();
             /*Need to catch case where this.placeIdInput is null*/
 
-            Event newEvent = new Event(-1, title, date, prepTime, transport, placeNameInput,placeIdInput,"nullgcalEvent",date);
+            Event newEvent = new Event(-1, title, date, prepTime, transport, placeNameInput,placeIdInput,"nullgcalEvent");
             dbAdapter.insertItem(newEvent);
         } catch (Exception e) {
             e.printStackTrace();

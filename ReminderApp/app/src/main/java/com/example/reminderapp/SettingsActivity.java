@@ -83,33 +83,45 @@ public class SettingsActivity extends AppCompatActivity {
         this.saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Drawable icon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_menu_save, null);
-                if (icon != null) {
-                    icon.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
-                }
-                // Create confirmation dialog
-                // On confirm, save settings, update prefs, and create Toast
-                new AlertDialog.Builder(activity).setTitle("Update Settings")
-                        .setMessage("Are you sure you want to save changes?")
-                        .setIcon(icon)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                SharedPreferences.Editor peditor = sharedPref.edit();
-                                String prepTime = defaultPrepTime.getText().toString();
-                                int spaceIndex = prepTime.indexOf(" ");
-                                if (spaceIndex != -1) {
-                                    prepTime = prepTime.substring(0, spaceIndex);
+                Boolean incomplete = defaultPrepTime.getText().toString().equals("");
+                if (incomplete) {
+                    Drawable badIcon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_dialog_alert, null);
+                    if (badIcon != null) {
+                        badIcon.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+                    }
+                    new AlertDialog.Builder(activity).setTitle("Form Incomplete")
+                            .setMessage("Fill out all empty fields before continuing.")
+                            .setIcon(badIcon)
+                            .setNeutralButton(android.R.string.ok, null).show();
+                } else {
+                    Drawable icon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_menu_save, null);
+                    if (icon != null) {
+                        icon.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+                    }
+                    // Create confirmation dialog
+                    // On confirm, save settings, update prefs, and create Toast
+                    new AlertDialog.Builder(activity).setTitle("Update Settings")
+                            .setMessage("Are you sure you want to save changes?")
+                            .setIcon(icon)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    SharedPreferences.Editor peditor = sharedPref.edit();
+                                    String prepTime = defaultPrepTime.getText().toString();
+                                    int spaceIndex = prepTime.indexOf(" ");
+                                    if (spaceIndex != -1) {
+                                        prepTime = prepTime.substring(0, spaceIndex);
+                                    }
+                                    peditor.putInt("PREP_TIME", Integer.parseInt(prepTime));
+                                    peditor.putInt("ALARM_TYPE", alarmSpinner.getSelectedItemPosition());
+                                    peditor.putInt("TRANSPORT_TYPE", transportSpinner.getSelectedItemPosition());
+                                    peditor.apply();
+                                    finish();
+                                    overridePendingTransition(R.transition.unstack, R.transition.exit);
+                                    Toast.makeText(getApplicationContext(), "Settings updated", Toast.LENGTH_SHORT).show();
                                 }
-                                peditor.putInt("PREP_TIME", Integer.parseInt(prepTime));
-                                peditor.putInt("ALARM_TYPE", alarmSpinner.getSelectedItemPosition());
-                                peditor.putInt("TRANSPORT_TYPE", transportSpinner.getSelectedItemPosition());
-                                peditor.apply();
-                                finish();
-                                overridePendingTransition(R.transition.unstack, R.transition.exit);
-                                Toast.makeText(getApplicationContext(), "Settings updated", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, null).show();
+                            })
+                            .setNegativeButton(android.R.string.no, null).show();
+                }
             }
         });
 
@@ -212,7 +224,7 @@ public class SettingsActivity extends AppCompatActivity {
         this.defaultPrepTime.clearFocus();
         String text = this.defaultPrepTime.getText().toString();
         int spaceIndex = text.indexOf(" ");
-        if (spaceIndex == -1) {
+        if (spaceIndex == -1 && !text.equals("")) {
             if (text.equals("1")) {
                 text += " minute";
             } else {

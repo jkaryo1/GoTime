@@ -51,7 +51,6 @@ public class LocationService extends Service
     private static final String LOCATION = "location";
     private static final String PLACE_ID = "place_id";
     private static final String GCAL_ID = "gcal_id";
-    private static final String DEPART_TIME = "depart_time";
     private static final String MESSAGE = "MESSAGE";
     private static final String URL_BASE = "https://maps.googleapis.com/maps/api/directions/json?";
     private static final String API_KEY_URL = "&key=AIzaSyBtH-O0z7HEEjoTxdTnvU6KH2yJxnmmBRw";
@@ -104,7 +103,6 @@ public class LocationService extends Service
             int locationIndex = cursor.getColumnIndex(LOCATION);
             int placeIDIndex = cursor.getColumnIndex(PLACE_ID);
             int gcalIDIndex = cursor.getColumnIndex(GCAL_ID);
-            int departIndex = cursor.getColumnIndex(DEPART_TIME);
             // Get components to create new lesson
             int id = cursor.getInt(idIndex);
             String title = cursor.getString(titleIndex);
@@ -116,11 +114,8 @@ public class LocationService extends Service
             String location = cursor.getString(locationIndex);
             String placeID = cursor.getString(placeIDIndex);
             String gcalID = cursor.getString(gcalIDIndex);
-            Calendar departTime = Calendar.getInstance();
-            departTime.clear();
-            departTime.setTimeInMillis(cursor.getLong(departIndex));
             // Create event and add to array
-            nextEvent = new Event(id, title, date, prepTime, transport, location, placeID, gcalID, departTime);
+            nextEvent = new Event(id, title, date, prepTime, transport, location, placeID, gcalID);
         } else {
             nextEvent = null;
         }
@@ -183,21 +178,6 @@ public class LocationService extends Service
         super.onDestroy();
         Log.v("STOP_SERVICE", "DONE");
         locationManager.removeUpdates(listener);
-    }
-
-    public static Thread performOnBackgroundThread(final Runnable runnable) {
-        final Thread t = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    runnable.run();
-                } finally {
-
-                }
-            }
-        };
-        t.start();
-        return t;
     }
 
     /**
@@ -335,7 +315,7 @@ public class LocationService extends Service
             try {
                 URL url = new URL(urls[0]);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                StringBuffer response = new StringBuffer();
+                StringBuilder response = new StringBuilder();
 
                 int responseCode = conn.getResponseCode();
                 if (responseCode == HttpURLConnection.HTTP_OK) {
