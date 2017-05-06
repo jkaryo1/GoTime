@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
@@ -19,6 +20,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.Toast;
 import android.content.Context;
 import android.content.BroadcastReceiver;
@@ -68,11 +70,16 @@ public class Alarm extends BroadcastReceiver {
             icon.setColorFilter(ContextCompat.getColor(context, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
         }
 
-        AlertDialog alertDialog = new AlertDialog.Builder(context).create();
+        AlertDialog alertDialog = new AlertDialog.Builder(context, R.style.DialogStyle).create();
         Window window;
 
         if ((window = alertDialog.getWindow()) != null) {
             window.setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                window.setBackgroundDrawable(context.getDrawable(android.R.drawable.alert_light_frame));
+//            } else {
+//                window.setBackgroundDrawable(ContextCompat.getDrawable(context, android.R.drawable.alert_light_frame));
+//            }
         }
 
         alertDialog.setTitle("It's GoTime!");
