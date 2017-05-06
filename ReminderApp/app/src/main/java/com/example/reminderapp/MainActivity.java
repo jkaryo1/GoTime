@@ -70,7 +70,6 @@ public class MainActivity extends AppCompatActivity {
     private static final String LOCATION = "location";
     private static final String PLACE_ID = "place_id";
     private static final String GCAL_ID = "gcal_id";
-    private static final String DEPART_TIME = "depart_time";
     private static final String MESSAGE = "MESSAGE";
 
     @Override
@@ -166,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
                 int locationIndex = cursor.getColumnIndex(LOCATION);
                 int placeIDIndex = cursor.getColumnIndex(PLACE_ID);
                 int gcalIDIndex = cursor.getColumnIndex(GCAL_ID);
-                int departIndex = cursor.getColumnIndex(DEPART_TIME);
                 // Get components to create new lesson
                 int id = cursor.getInt(idIndex);
                 String title = cursor.getString(titleIndex);
@@ -178,11 +176,8 @@ public class MainActivity extends AppCompatActivity {
                 String location = cursor.getString(locationIndex);
                 String placeID = cursor.getString(placeIDIndex);
                 String gcalID = cursor.getString(gcalIDIndex);
-                Calendar departTime = Calendar.getInstance();
-                departTime.clear();
-                departTime.setTimeInMillis(cursor.getLong(departIndex));
                 // Create event and add to array
-                Event result = new Event(id, title, date, prepTime, transport, location, placeID, gcalID, departTime);
+                Event result = new Event(id, title, date, prepTime, transport, location, placeID, gcalID);
                 this.eventArrayList.add(result);
             } while (cursor.moveToNext());
         }

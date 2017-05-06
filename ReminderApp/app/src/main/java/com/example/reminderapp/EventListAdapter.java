@@ -27,7 +27,6 @@ class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private static final String LOCATION = "location";
     private static final String PLACE_ID = "place_id";
     private static final String GCAL_ID = "gcal_id";
-    private static final String DEPART_TIME = "depart_time";
 
     // Set array and context, and initialize colors array
     EventListAdapter(ArrayList<Object> list, Context c) {
@@ -111,7 +110,6 @@ class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                     intent.putExtra(LOCATION, event.location);
                     intent.putExtra(PLACE_ID, event.placeID);
                     intent.putExtra(GCAL_ID, event.gcalID);
-                    intent.putExtra(DEPART_TIME, event.departTime.getTimeInMillis());
                     context.startActivity(intent);
                     ((Activity) context).overridePendingTransition(R.transition.enter, R.transition.stack);
                 }

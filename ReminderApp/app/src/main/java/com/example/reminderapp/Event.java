@@ -27,8 +27,6 @@ class Event {
     String placeID;
     /*id of the event in google calendar*/
     String gcalID;
-    /*Calendar used to represent the date and time the user should depart for the event*/
-    Calendar departTime;
 
 
     private static final String DATE_FORMAT = "MM/dd/yyyy hh:mm a";
@@ -40,7 +38,7 @@ class Event {
 
 
 
-    Event(int i, String tit, long cal, Integer p, String tra, String l, String p_id, String g_id, long d) {
+    Event(int i, String tit, long cal, Integer p, String tra, String l, String p_id, String g_id) {
         try {
             this.id = i;
             this.title = tit;
@@ -52,15 +50,12 @@ class Event {
             this.location = l;
             this.placeID = p_id;
             this.gcalID = g_id;
-            this.departTime = Calendar.getInstance();
-            this.departTime.clear();
-            this.departTime.setTimeInMillis(d);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    Event(int i, String tit, Calendar cal, Integer p, String tra, String l, String p_id, String g_id, Calendar d) {
+    Event(int i, String tit, Calendar cal, Integer p, String tra, String l, String p_id, String g_id) {
         this.id = i;
         this.title = tit;
         this.date = cal;
@@ -69,7 +64,6 @@ class Event {
         this.location = l;
         this.placeID = p_id;
         this.gcalID = g_id;
-        this.departTime = d;
     }
 
     void setDate(String d) {
