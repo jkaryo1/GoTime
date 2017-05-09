@@ -37,7 +37,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">18sp</item>
-        <item name="android:textColor">@color/darkGray</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="android:textColorHint">@color/midGray</item>
     </style>
 
@@ -52,7 +52,7 @@
     </style>
 
     <style name="SpinnerStyle" parent="AppTheme">
-        <item name="android:textColor">@color/darkGray</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="android:textSize">18sp</item>
     </style>
 

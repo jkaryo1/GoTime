@@ -158,7 +158,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                 });
             }
             EditText locInput = (EditText) af.findViewById(R.id.place_autocomplete_search_input);
-            locInput.setTextColor(ContextCompat.getColor(this, R.color.darkGray));
+            locInput.setTextColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
             locInput.setTextSize(18f);
         }
 
