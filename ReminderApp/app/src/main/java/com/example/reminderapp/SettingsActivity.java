@@ -45,6 +45,9 @@ public class SettingsActivity extends AppCompatActivity {
     private Button cancelButton;
     private Spinner alarmSpinner;
     private Spinner transportSpinner;
+    private String prepTimeString="";
+    private String alarmString="";
+    private String transportString="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +72,7 @@ public class SettingsActivity extends AppCompatActivity {
         this.transportLayout = (RelativeLayout) findViewById(R.id.transport_spinner_view);
         this.saveButton = (Button) findViewById(R.id.save_button);
         this.cancelButton = (Button) findViewById(R.id.cancel_button);
+        this.cancelButton.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.darkGray), PorterDuff.Mode.MULTIPLY);
         this.saveButton.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
 
         /*Setting upp the SharedPreferences object*/
@@ -94,33 +98,44 @@ public class SettingsActivity extends AppCompatActivity {
                             .setIcon(badIcon)
                             .setNeutralButton(android.R.string.ok, null).show();
                 } else {
-                    Drawable icon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_menu_save, null);
-                    if (icon != null) {
-                        icon.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+                    Boolean identical = defaultPrepTime.getText().toString().equals(prepTimeString);
+                    if (identical) {
+                        identical = transportSpinner.getSelectedItem().toString().equals(transportString);
+                        if (identical) {
+                            identical = alarmSpinner.getSelectedItem().toString().equals(alarmString);
+                        }
                     }
-                    // Create confirmation dialog
-                    // On confirm, save settings, update prefs, and create Toast
-                    new AlertDialog.Builder(activity).setTitle("Update Settings")
-                            .setMessage("Are you sure you want to save changes?")
-                            .setIcon(icon)
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    SharedPreferences.Editor peditor = sharedPref.edit();
-                                    String prepTime = defaultPrepTime.getText().toString();
-                                    int spaceIndex = prepTime.indexOf(" ");
-                                    if (spaceIndex != -1) {
-                                        prepTime = prepTime.substring(0, spaceIndex);
+                    if (!identical) {
+                        Drawable icon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_menu_save, null);
+                        if (icon != null) {
+                            icon.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+                        }
+                        // Create confirmation dialog
+                        // On confirm, save settings, update prefs, and create Toast
+                        new AlertDialog.Builder(activity).setTitle("Update Settings")
+                                .setMessage("Are you sure you want to save changes?")
+                                .setIcon(icon)
+                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        SharedPreferences.Editor peditor = sharedPref.edit();
+                                        String prepTime = defaultPrepTime.getText().toString();
+                                        int spaceIndex = prepTime.indexOf(" ");
+                                        if (spaceIndex != -1) {
+                                            prepTime = prepTime.substring(0, spaceIndex);
+                                        }
+                                        peditor.putInt("PREP_TIME", Integer.parseInt(prepTime));
+                                        peditor.putInt("ALARM_TYPE", alarmSpinner.getSelectedItemPosition());
+                                        peditor.putInt("TRANSPORT_TYPE", transportSpinner.getSelectedItemPosition());
+                                        peditor.apply();
+                                        finish();
+                                        overridePendingTransition(R.transition.unstack, R.transition.exit);
+                                        Toast.makeText(getApplicationContext(), "Settings updated", Toast.LENGTH_SHORT).show();
                                     }
-                                    peditor.putInt("PREP_TIME", Integer.parseInt(prepTime));
-                                    peditor.putInt("ALARM_TYPE", alarmSpinner.getSelectedItemPosition());
-                                    peditor.putInt("TRANSPORT_TYPE", transportSpinner.getSelectedItemPosition());
-                                    peditor.apply();
-                                    finish();
-                                    overridePendingTransition(R.transition.unstack, R.transition.exit);
-                                    Toast.makeText(getApplicationContext(), "Settings updated", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .setNegativeButton(android.R.string.no, null).show();
+                                })
+                                .setNegativeButton(android.R.string.no, null).show();
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Nothing to Update", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -128,23 +143,36 @@ public class SettingsActivity extends AppCompatActivity {
         this.cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Drawable icon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_dialog_alert, null);
-                if (icon != null) {
-                    icon.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+                Boolean identical = defaultPrepTime.getText().toString().equals(prepTimeString);
+                if (identical) {
+                    identical = transportSpinner.getSelectedItem().toString().equals(transportString);
+                    if (identical) {
+                        identical = alarmSpinner.getSelectedItem().toString().equals(alarmString);
+                    }
                 }
-                // Create confirmation dialog
-                // On confirm, revert changes and create Toast
-                new AlertDialog.Builder(activity).setTitle("Cancel Changes")
-                        .setMessage("Are you sure you want to cancel changes?")
-                        .setIcon(icon)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                finish();
-                                overridePendingTransition(R.transition.unstack, R.transition.exit);
-                                Toast.makeText(activity, "Changes cancelled", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setNegativeButton(android.R.string.no, null).show();
+                if (!identical) {
+                    Drawable icon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_dialog_alert, null);
+                    if (icon != null) {
+                        icon.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+                    }
+                    // Create confirmation dialog
+                    // On confirm, revert changes and create Toast
+                    new AlertDialog.Builder(activity).setTitle("Cancel Changes")
+                            .setMessage("Are you sure you want to cancel changes?")
+                            .setIcon(icon)
+                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int whichButton) {
+                                    finish();
+                                    overridePendingTransition(R.transition.unstack, R.transition.exit);
+                                    Toast.makeText(activity, "Changes cancelled", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .setNegativeButton(android.R.string.no, null).show();
+                } else {
+                    finish();
+                    overridePendingTransition(R.transition.unstack, R.transition.exit);
+                    Toast.makeText(activity, "Changes cancelled", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -207,15 +235,17 @@ public class SettingsActivity extends AppCompatActivity {
         } else {
             prepText += " minutes";
         }
+        this.prepTimeString = prepText;
         this.defaultPrepTime.setText(prepText);
         this.alarmSpinner.setSelection(alarmType);
         this.transportSpinner.setSelection(transportType);
+        this.alarmString = this.alarmSpinner.getSelectedItem().toString();
+        this.transportString = this.transportSpinner.getSelectedItem().toString();
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.transition.unstack, R.transition.exit);
+        this.cancelButton.performClick();
     }
 
     // Dismiss keyboard, control cursor behavior

@@ -124,7 +124,7 @@ class EventListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             eventTime.setText(event.getTime());
             eventLocation.setText(event.location);
 
-            cardView.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.lighterCard), PorterDuff.Mode.SRC_IN);
+            cardView.getBackground().setColorFilter(ContextCompat.getColor(context, R.color.colorEventCard), PorterDuff.Mode.SRC_IN);
 
         }
     }

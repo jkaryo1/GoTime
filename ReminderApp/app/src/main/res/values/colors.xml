@@ -5,8 +5,7 @@
     <color name="colorAccent">#983fe9</color>
     <color name="lightGray">#F0F0F0</color>
     <color name="colorGreen">#41CB12</color>
-    <color name="darkerCard">#c797f3</color>
-    <color name="lighterCard">#c797f3</color>
+    <color name="colorEventCard">#c797f3</color>
     <color name="diffPurple">#bd74ff</color>
     <color name="white">#FFFFFF</color>
     <color name="darkGray">#606060</color>

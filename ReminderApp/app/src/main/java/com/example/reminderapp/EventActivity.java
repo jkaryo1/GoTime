@@ -64,15 +64,21 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
     private PlaceAutocompleteFragment autocompleteFragment;
     private Toolbar toolbar;
     private TextView title;
+    private String titleString="";
     private EditText dateView;
+    private String dateString="";
     private EditText timeView;
+    private String timeString="";
     private Button saveButton;
     private Button cancelButton;
     private EditText titleInput;
     private EditText prepTimeInput;
+    private String prepTimeString="";
     private String placeIdInput;
-    private String placeNameInput;
+    private String placeString="";
+    private String placeNameInput="";
     private Spinner transportMethod;
+    private String transportString="";
 
     private DatabaseAdapter dbAdapter;
     private GoogleApiClient mGoogleApiClient;
@@ -185,7 +191,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
 
         final Activity activity = this;
 
-
+        this.cancelButton.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.darkGray), PorterDuff.Mode.MULTIPLY);
         this.saveButton.getBackground().setColorFilter(ContextCompat.getColor(this,R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -203,17 +209,21 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             title.setText(R.string.edit_event);
             int id = intent.getIntExtra(ID, -1);
             String title = intent.getStringExtra(TITLE);
+            this.titleString = title;
             long dateMillis = intent.getLongExtra(DATE, 0);
             int prepTime = intent.getIntExtra(PREP_TIME, 0);
             String transport = intent.getStringExtra(TRANSPORT);
             String location = intent.getStringExtra(LOCATION);
+            this.placeString = location;
             String placeID = intent.getStringExtra(PLACE_ID);
             String gcalID = intent.getStringExtra(GCAL_ID);
             this.placeNameInput = location;
             this.placeIdInput = placeID;
             this.event = new Event(id, title, dateMillis, prepTime, transport, location, placeID, gcalID);
             this.titleInput.setText(this.event.title);
-            this.dateView.setText(this.event.getDate());
+            this.dateString = this.event.getDate();
+            this.dateView.setText(this.dateString);
+            this.timeString = this.event.getTime();
             this.timeView.setText(this.event.getTime());
             String prepText = prepTime + "";
             if (prepTime == 1) {
@@ -221,12 +231,10 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             } else {
                 prepText += " minutes";
             }
+            this.prepTimeString = prepText;
             this.prepTimeInput.setText(prepText);
             this.autocompleteFragment.setText(this.event.location);
-
-
-
-
+            this.transportString = this.event.transport;
             switch (this.event.transport) {
                 case "Driving":
                     this.transportMethod.setSelection(1);
@@ -248,8 +256,10 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             } else {
                 prepText += " minutes";
             }
+            this.prepTimeString = prepText;
             this.prepTimeInput.setText(prepText);
             this.transportMethod.setSelection(transportType);
+            this.transportString = this.transportMethod.getSelectedItem().toString();
         }
 
         final TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener() {
@@ -367,18 +377,38 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                     // Create confirmation dialog
                     // On confirm, save settings, update prefs, and create Toast
                     if(isExistingEvent) {
-                        new AlertDialog.Builder(activity).setTitle("Update Event")
-                                .setMessage("Are you sure you want to update event?")
-                                .setIcon(icon)
-                                .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int whichButton) {
-                                        updateEvent();
-                                        finish();
-                                        overridePendingTransition(R.transition.unstack, R.transition.exit);
-                                        Toast.makeText(getApplicationContext(), "Event Updated", Toast.LENGTH_SHORT).show();
+                        Boolean identical = titleInput.getText().toString().equals(titleString);
+                        if (identical) {
+                            identical = dateView.getText().toString().equals(dateString);
+                            if (identical) {
+                                identical = timeView.getText().toString().equals(timeString);
+                                if (identical) {
+                                    identical = prepTimeInput.getText().toString().equals(prepTimeString);
+                                    if (identical) {
+                                        identical = transportMethod.getSelectedItem().toString().equals(transportString);
+                                        if (identical) {
+                                            identical = placeNameInput.equals(placeString);
+                                        }
                                     }
-                                })
-                                .setNegativeButton(R.string.cancel, null).show();
+                                }
+                            }
+                        }
+                        if (!identical) {
+                            new AlertDialog.Builder(activity).setTitle("Update Event")
+                                    .setMessage("Are you sure you want to update event?")
+                                    .setIcon(icon)
+                                    .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int whichButton) {
+                                            updateEvent();
+                                            finish();
+                                            overridePendingTransition(R.transition.unstack, R.transition.exit);
+                                            Toast.makeText(getApplicationContext(), "Event Updated", Toast.LENGTH_SHORT).show();
+                                        }
+                                    })
+                                    .setNegativeButton(R.string.cancel, null).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Nothing to Update", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
                         new AlertDialog.Builder(activity).setTitle("Add Event")
                                 .setMessage("Are you sure you want to save event?")
@@ -400,36 +430,64 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         this.cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Drawable icon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_dialog_alert, null);
-                if (icon != null) {
-                    icon.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+                Boolean identical = titleInput.getText().toString().equals(titleString);
+                if (identical) {
+                    identical = dateView.getText().toString().equals(dateString);
+                    if (identical) {
+                        identical = timeView.getText().toString().equals(timeString);
+                        if (identical) {
+                            identical = prepTimeInput.getText().toString().equals(prepTimeString);
+                            if (identical) {
+                                identical = transportMethod.getSelectedItem().toString().equals(transportString);
+                                if (identical) {
+                                    identical = placeNameInput.equals(placeString);
+                                }
+                            }
+                        }
+                    }
                 }
-                // Create confirmation dialog
-                // On confirm, revert changes and create Toast
-                if (isExistingEvent) {
-                    new AlertDialog.Builder(activity).setTitle("Cancel Changes")
-                            .setMessage("Are you sure you want to cancel changes?")
-                            .setIcon(icon)
-                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    finish();
-                                    overridePendingTransition(R.transition.unstack, R.transition.exit);
-                                    Toast.makeText(activity, "Changes Cancelled", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .setNegativeButton(R.string.no, null).show();
+                if (!identical) {
+                    Drawable icon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_dialog_alert, null);
+                    if (icon != null) {
+                        icon.setColorFilter(ContextCompat.getColor(activity, R.color.colorPrimary), PorterDuff.Mode.SRC_IN);
+                    }
+                    // Create confirmation dialog
+                    // On confirm, revert changes and create Toast
+                    if (isExistingEvent) {
+                        new AlertDialog.Builder(activity).setTitle("Cancel Changes")
+                                .setMessage("Are you sure you want to cancel changes?")
+                                .setIcon(icon)
+                                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        finish();
+                                        overridePendingTransition(R.transition.unstack, R.transition.exit);
+                                        Toast.makeText(activity, "Changes Cancelled", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .setNegativeButton(R.string.no, null).show();
+                    } else {
+                        new AlertDialog.Builder(activity).setTitle("Cancel New Event")
+                                .setMessage("Are you sure you want to cancel adding event?")
+                                .setIcon(icon)
+                                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int whichButton) {
+                                        finish();
+                                        overridePendingTransition(R.transition.unstack, R.transition.exit);
+                                        Toast.makeText(activity, "New Event Cancelled", Toast.LENGTH_SHORT).show();
+                                    }
+                                })
+                                .setNegativeButton(R.string.no, null).show();
+                    }
                 } else {
-                    new AlertDialog.Builder(activity).setTitle("Cancel New Event")
-                            .setMessage("Are you sure you want to cancel adding event?")
-                            .setIcon(icon)
-                            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int whichButton) {
-                                    finish();
-                                    overridePendingTransition(R.transition.unstack, R.transition.exit);
-                                    Toast.makeText(activity, "New Event Cancelled", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .setNegativeButton(R.string.no, null).show();
+                    finish();
+                    overridePendingTransition(R.transition.unstack, R.transition.exit);
+                    String toastText = "";
+                    if (isExistingEvent) {
+                        toastText = "Changes Cancelled";
+                    } else {
+                        toastText = "New Event Cancelled";
+                    }
+                    Toast.makeText(activity, toastText, Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -579,8 +637,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.transition.unstack, R.transition.exit);
+        this.cancelButton.performClick();
     }
 
     /**
