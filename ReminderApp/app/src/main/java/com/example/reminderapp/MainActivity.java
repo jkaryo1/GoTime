@@ -1,14 +1,17 @@
 package com.example.reminderapp;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -16,6 +19,7 @@ import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -66,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver receiver;
     private BroadcastReceiver deleteReceiver;
     private Context context;
+    private boolean locationEnabled = true;
+    private boolean backFromDialog = false;
 
     private static final String ID = "id";
     private static final String TITLE = "title";
@@ -81,7 +87,8 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.ACCESS_COARSE_LOCATION,
             Manifest.permission.SYSTEM_ALERT_WINDOW,
             Manifest.permission.SET_ALARM,
-            Manifest.permission.WAKE_LOCK
+            Manifest.permission.WAKE_LOCK,
+            Manifest.permission.ACCESS_NETWORK_STATE
     };
     private static final int INITIAL_REQUEST=1337;
     private static final int OVERLAY_PERMISSION_REQUEST_CODE=1234;
@@ -105,9 +112,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST_CODE);
             }
         }
-
-        Intent servIntent = new Intent(context, LocationService.class);
-        context.startService(servIntent);
 
         receiver = new BroadcastReceiver() {
             @Override
@@ -137,18 +141,9 @@ public class MainActivity extends AppCompatActivity {
 
         this.nextEvent = (TextView) findViewById(R.id.next_event_time);
 
-//        this.searchView = (SearchView) findViewById(R.id.event_search);
-//        this.searchView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                searchView.setIconified(false);
-//            }
-//        });
 
         this.eventArrayList = new ArrayList<>();
         this.recyclerView = (RecyclerView) findViewById(R.id.event_recycler_view);
-//        DividerItemDecoration divider = new DividerItemDecoration(recyclerView.getContext(), LinearLayoutManager.VERTICAL);
-//        this.recyclerView.addItemDecoration(divider);
         this.recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
@@ -160,6 +155,8 @@ public class MainActivity extends AppCompatActivity {
     // Update array when fragment comes back into display
     @Override
     public void onResume() {
+        ensureLocationEnabled();
+        backFromDialog = false;
         this.nextEvent.setText(getResources().getString(R.string.calculating));
         updateArray();
         super.onResume();
@@ -177,6 +174,29 @@ public class MainActivity extends AppCompatActivity {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(deleteReceiver);
         LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
         super.onStop();
+    }
+
+    public void ensureLocationEnabled() {
+        LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) || !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+            builder.setTitle("Location Services Not Active");
+            builder.setMessage("Please enable Location Services and GPS. Ensure Mode is set as \"High accuracy.\"");
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    backFromDialog = true;
+                    // Show location settings when the user acknowledges the alert dialog
+                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    startActivity(intent);
+                }
+            });
+            Dialog alertDialog = builder.create();
+            alertDialog.setCanceledOnTouchOutside(false);
+            alertDialog.show();
+        } else {
+            Intent servIntent = new Intent(context, LocationService.class);
+            context.startService(servIntent);
+        }
     }
 
     // Updates the array of displayed lessons
