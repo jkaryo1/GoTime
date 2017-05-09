@@ -1,14 +1,18 @@
 package com.example.reminderapp;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.content.res.ResourcesCompat;
@@ -61,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView nextEvent;
     private BroadcastReceiver receiver;
     private BroadcastReceiver deleteReceiver;
+    private Context context;
 
     private static final String ID = "id";
     private static final String TITLE = "title";
@@ -71,14 +76,38 @@ public class MainActivity extends AppCompatActivity {
     private static final String PLACE_ID = "place_id";
     private static final String GCAL_ID = "gcal_id";
     private static final String MESSAGE = "MESSAGE";
+    private static final String[] INITIAL_PERMS={
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.SYSTEM_ALERT_WINDOW,
+            Manifest.permission.SET_ALARM,
+            Manifest.permission.WAKE_LOCK
+    };
+    private static final int INITIAL_REQUEST=1337;
+    private static final int OVERLAY_PERMISSION_REQUEST_CODE=1234;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent servIntent = new Intent(getApplicationContext(), LocationService.class);
-        getApplicationContext().startService(servIntent);
+        this.context = getApplicationContext();
+
+        if (!canAccessLocation()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(INITIAL_PERMS, INITIAL_REQUEST);
+            }
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                        Uri.parse("package:" + getPackageName()));
+                startActivityForResult(intent, OVERLAY_PERMISSION_REQUEST_CODE);
+            }
+        }
+
+        Intent servIntent = new Intent(context, LocationService.class);
+        context.startService(servIntent);
 
         receiver = new BroadcastReceiver() {
             @Override
@@ -103,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
-        this.dbAdapter = DatabaseAdapter.getInstance(getApplicationContext());
+        this.dbAdapter = DatabaseAdapter.getInstance(context);
         this.dbAdapter.open();
 
         this.nextEvent = (TextView) findViewById(R.id.next_event_time);
@@ -260,7 +289,10 @@ public class MainActivity extends AppCompatActivity {
         }
         return result;
     }
-
-
-
+    private boolean canAccessLocation() {
+        return(hasPermission(Manifest.permission.ACCESS_FINE_LOCATION) && hasPermission(Manifest.permission.ACCESS_COARSE_LOCATION));
+    }
+    private boolean hasPermission(String perm) {
+        return(PackageManager.PERMISSION_GRANTED== ContextCompat.checkSelfPermission(context, perm));
+    }
 }

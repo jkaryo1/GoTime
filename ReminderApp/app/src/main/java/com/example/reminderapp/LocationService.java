@@ -1,10 +1,12 @@
 package com.example.reminderapp;
 
+import android.Manifest;
 import android.app.AlarmManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.location.Location;
 import android.location.LocationListener;
@@ -13,6 +15,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -199,7 +202,7 @@ public class LocationService extends Service
 
     public void sendTime() {
         Intent intent = new Intent(BROADCAST_ACTION);
-        if (travelTime != null) {
+        if (travelTime != null && nextEvent != null) {
             AlarmManager mgrAlarm = (AlarmManager) context.getSystemService(ALARM_SERVICE);
 
             Calendar currTime = Calendar.getInstance();
@@ -272,7 +275,11 @@ public class LocationService extends Service
                 message += openColor + color + closeColor + timeString + finish;
                 intent.putExtra(MESSAGE, message);
             } else {
-                intent.putExtra(MESSAGE, getResources().getString(R.string.calculating));
+                if (nextEvent == null) {
+                    intent.putExtra(MESSAGE, "No events");
+                } else {
+                    intent.putExtra(MESSAGE, getResources().getString(R.string.calculating));
+                }
             }
             broadcaster.sendBroadcast(intent);
         }
@@ -354,7 +361,4 @@ public class LocationService extends Service
             sendTime();
         }
     }
-
-
-
 }

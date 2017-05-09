@@ -104,8 +104,12 @@ public class Alarm extends BroadcastReceiver {
 
         PendingIntent pendInt = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-
-        alarmMan.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (secondsToAlarm * 1000), pendInt);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            AlarmManager.AlarmClockInfo info = new AlarmManager.AlarmClockInfo(System.currentTimeMillis() + (secondsToAlarm * 1000), pendInt);
+            alarmMan.setAlarmClock(info, pendInt);
+        } else {
+            alarmMan.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + (secondsToAlarm * 1000), pendInt);
+        }
     }
 
     public  void cancelAlarm(Context context) {
