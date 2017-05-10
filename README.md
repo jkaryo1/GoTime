@@ -71,6 +71,10 @@ Alarms are set by the LocationService and stored using an alarm manager. The
 sound of the alarm can be changed by updating the default alarm sound in the
 settings activity.
 
+Permissions:
+GoTime requires full location permission (requires the user to turn on high-
+accuracy mode) and needs permission to draw over apps in order to send alarms.
+
 CREDIT:
 The WorkaroundMapFragment.java class, as well as its basic implementation, was
 modeled after Alok Nair's post on StackOverflow regarding enabling vertical map
