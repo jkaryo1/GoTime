@@ -145,9 +145,10 @@
                 android:text="@string/notes_label" />
 
             <EditText
-                android:id="@+id/notes"
+                android:id="@+id/notes_input"
                 style="@style/EditTextRounded"
                 android:gravity="start"
+                android:scrollbars="vertical"
                 android:inputType="textMultiLine"
                 android:hint="@string/prepTimeHint"
                 android:minLines="5"

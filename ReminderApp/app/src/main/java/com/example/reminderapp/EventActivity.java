@@ -29,6 +29,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -69,6 +70,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
     private String dateString="";
     private EditText timeView;
     private String timeString="";
+    private EditText notesInput;
     private Button saveButton;
     private Button cancelButton;
     private EditText titleInput;
@@ -182,6 +184,8 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         this.timeView = (EditText) findViewById(R.id.time);
         this.titleInput = (EditText) findViewById(R.id.title_input);
         this.prepTimeInput = (EditText) findViewById(R.id.prep_time);
+        this.notesInput = (EditText) findViewById(R.id.notes_input);
+
         final RelativeLayout transportLayout = (RelativeLayout) findViewById(R.id.transport_spinner_view);
 
         this.transportMethod = (Spinner) transportLayout.findViewById(R.id.transport_spinner);
@@ -202,6 +206,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         }
         setListeners(this.titleInput);
         setListeners(this.prepTimeInput);
+        setListeners(this.notesInput);
 
         Intent intent = getIntent();
         this.isExistingEvent = intent.getBooleanExtra("EXISTING_EVENT", false);
@@ -261,6 +266,21 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             this.transportMethod.setSelection(transportType);
             this.transportString = this.transportMethod.getSelectedItem().toString();
         }
+
+        notesInput.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (v.getId() == R.id.notes_input) {
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                        case MotionEvent.ACTION_UP:
+                            v.getParent().requestDisallowInterceptTouchEvent(false);
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
 
         final TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener() {
             @Override
