@@ -35,6 +35,8 @@ class Event {
     private static final SimpleDateFormat jdf = new SimpleDateFormat(JUST_DATE_FORMAT, Locale.US);
     private static final String TIME_FORMAT = "h:mm a";
     private static final SimpleDateFormat tf = new SimpleDateFormat(TIME_FORMAT, Locale.US);
+    private static final String DAY_OF_WEEK_FORMAT = "EE";
+    private static final SimpleDateFormat dwf = new SimpleDateFormat(DAY_OF_WEEK_FORMAT, Locale.US);
 
 
 
@@ -82,6 +84,7 @@ class Event {
     String getDate() {
         return jdf.format(this.date.getTime());
     }
+    String getDayOfWeek() { return dwf.format(this.date.getTime()); }
     String getTime() {
         return tf.format(this.date.getTime());
     }

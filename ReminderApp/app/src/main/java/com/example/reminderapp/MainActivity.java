@@ -29,6 +29,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -254,6 +255,18 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             Dialog alertDialog = builder.create();
+            alertDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
+                @Override
+                public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
+                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+                        backFromDialog = true;
+                        locationDismissed = true;
+                        nextEvent.setText(getResources().getString(R.string.noLocServices));
+                        dialog.dismiss();
+                    }
+                    return true;
+                }
+            });
             alertDialog.setCanceledOnTouchOutside(false);
             alertDialog.show();
         } else {
@@ -298,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
         while (i < this.eventArrayList.size()) {
             Event e = (Event) this.eventArrayList.get(i);
             if (i == 0 || !e.getDate().equals(((Event) this.eventArrayList.get(i - 1)).getDate())) {
-                this.eventArrayList.add(i, e.getDate());
+                this.eventArrayList.add(i, e.getDate() + " - " + e.getDayOfWeek());
                 i++;
             }
             i++;
