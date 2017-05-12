@@ -27,6 +27,8 @@ class Event {
     String placeID;
     /*id of the event in google calendar*/
     String gcalID;
+    /*Notes about the event*/
+    String notes;
 
 
     private static final String DATE_FORMAT = "MM/dd/yyyy hh:mm a";
@@ -39,8 +41,19 @@ class Event {
     private static final SimpleDateFormat dwf = new SimpleDateFormat(DAY_OF_WEEK_FORMAT, Locale.US);
 
 
-
-    Event(int i, String tit, long cal, Integer p, String tra, String l, String p_id, String g_id) {
+    /**
+     * Constructor for an Event.
+     * @param i the id of the event
+     * @param tit the title of the event
+     * @param cal long represesenting the datetimeof the event
+     * @param p Integer for the minutes to prepare for the event
+     * @param tra string describing transportation method
+     * @param l string describing location of the event
+     * @param p_id place id of the location of the event
+     * @param g_id id of the event in google calendar
+     * @param n string of the notes about the event
+     */
+    Event(int i, String tit, long cal, Integer p, String tra, String l, String p_id, String g_id, String n) {
         try {
             this.id = i;
             this.title = tit;
@@ -52,12 +65,13 @@ class Event {
             this.location = l;
             this.placeID = p_id;
             this.gcalID = g_id;
+            this.notes = n;
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    Event(int i, String tit, Calendar cal, Integer p, String tra, String l, String p_id, String g_id) {
+    Event(int i, String tit, Calendar cal, Integer p, String tra, String l, String p_id, String g_id, String n) {
         this.id = i;
         this.title = tit;
         this.date = cal;
@@ -66,6 +80,7 @@ class Event {
         this.location = l;
         this.placeID = p_id;
         this.gcalID = g_id;
+        this.notes = n;
     }
 
     void setDate(String d) {

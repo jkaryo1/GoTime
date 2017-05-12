@@ -54,6 +54,7 @@ public class LocationService extends Service
     private static final String LOCATION = "location";
     private static final String PLACE_ID = "place_id";
     private static final String GCAL_ID = "gcal_id";
+    private static final String NOTES = "notes";
     private static final String MESSAGE = "MESSAGE";
     private static final String URL_BASE = "https://maps.googleapis.com/maps/api/directions/json?";
     private static final String API_KEY_URL = "&key=AIzaSyBtH-O0z7HEEjoTxdTnvU6KH2yJxnmmBRw";
@@ -111,6 +112,7 @@ public class LocationService extends Service
             int locationIndex = cursor.getColumnIndex(LOCATION);
             int placeIDIndex = cursor.getColumnIndex(PLACE_ID);
             int gcalIDIndex = cursor.getColumnIndex(GCAL_ID);
+            int notesIndex = cursor.getColumnIndex(NOTES);
             // Get components to create new lesson
             int id = cursor.getInt(idIndex);
             String title = cursor.getString(titleIndex);
@@ -122,8 +124,9 @@ public class LocationService extends Service
             String location = cursor.getString(locationIndex);
             String placeID = cursor.getString(placeIDIndex);
             String gcalID = cursor.getString(gcalIDIndex);
+            String notes = cursor.getString(notesIndex);
             // Create event and add to array
-            nextEvent = new Event(id, title, date, prepTime, transport, location, placeID, gcalID);
+            nextEvent = new Event(id, title, date, prepTime, transport, location, placeID, gcalID,notes);
         } else {
             nextEvent = null;
         }

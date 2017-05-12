@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String PLACE_ID = "place_id";
     private static final String GCAL_ID = "gcal_id";
     private static final String MESSAGE = "MESSAGE";
+    private static final String NOTES = "notes";
     private static final String[] INITIAL_PERMS={
             Manifest.permission.ACCESS_FINE_LOCATION,
             Manifest.permission.ACCESS_COARSE_LOCATION,
@@ -208,31 +209,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-//        if (permission == -1) {
-//            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
-//            builder.setTitle("Location Services Not Active");
-//            builder.setMessage("Please enable Location Services for GoTime");
-//            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                public void onClick(DialogInterface dialogInterface, int i) {
-//                    backFromDialog = true;
-//                    locationDismissed = false;
-//                    // Show location settings when the user acknowledges the alert dialog
-//                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-//                    startActivity(intent);
-//                }
-//            });
-//            builder.setNegativeButton("DISMISS", new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialog, int which) {
-//                    backFromDialog = true;
-//                    locationDismissed = true;
-//                    nextEvent.setText(getResources().getString(R.string.noLocServices));
-//                }
-//            });
-//            Dialog alertDialog = builder.create();
-//            alertDialog.setCanceledOnTouchOutside(false);
-//            alertDialog.show();
-
         if((!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) && locPermissionAsked && canAccessLocation()) || (!locationDismissed && canAccessLocation() && !lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER))) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
             builder.setTitle("Location Services Not Active");
@@ -290,6 +266,7 @@ public class MainActivity extends AppCompatActivity {
                 int locationIndex = cursor.getColumnIndex(LOCATION);
                 int placeIDIndex = cursor.getColumnIndex(PLACE_ID);
                 int gcalIDIndex = cursor.getColumnIndex(GCAL_ID);
+                int notesIndex = cursor.getColumnIndex(NOTES);
                 // Get components to create new lesson
                 int id = cursor.getInt(idIndex);
                 String title = cursor.getString(titleIndex);
@@ -301,8 +278,10 @@ public class MainActivity extends AppCompatActivity {
                 String location = cursor.getString(locationIndex);
                 String placeID = cursor.getString(placeIDIndex);
                 String gcalID = cursor.getString(gcalIDIndex);
+                String notes = cursor.getString(notesIndex);
+                Log.d("Update Array", notes);
                 // Create event and add to array
-                Event result = new Event(id, title, date, prepTime, transport, location, placeID, gcalID);
+                Event result = new Event(id, title, date, prepTime, transport, location, placeID, gcalID, notes);
                 this.eventArrayList.add(result);
             } while (cursor.moveToNext());
         }

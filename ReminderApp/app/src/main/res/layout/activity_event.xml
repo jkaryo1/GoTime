@@ -150,7 +150,7 @@
                 android:gravity="start"
                 android:scrollbars="vertical"
                 android:inputType="textMultiLine"
-                android:hint="@string/prepTimeHint"
+                android:hint="@string/notes_hint"
                 android:minLines="5"
                 android:maxLines="5"
                 android:cursorVisible="false"
