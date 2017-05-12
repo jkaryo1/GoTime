@@ -49,4 +49,5 @@
     <string name="no">No</string>
     <string name="title_activity_maps">Map</string>
     <string name="calculating">Calculating time for next event…</string>
+    <string name="noLocServices">Location Services Disabled</string>
 </resources>

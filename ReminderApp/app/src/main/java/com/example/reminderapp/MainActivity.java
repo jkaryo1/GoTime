@@ -72,6 +72,10 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
     private boolean locationEnabled = true;
     private boolean backFromDialog = false;
+    /*variable tracking whether the user has refused to enable location*/
+    private boolean locationDismissed;
+    /*variable tracking whether the user has been asked to enable location access to GoTime*/
+    private boolean locPermissionAsked;
 
     private static final String ID = "id";
     private static final String TITLE = "title";
@@ -100,11 +104,6 @@ public class MainActivity extends AppCompatActivity {
 
         this.context = getApplicationContext();
 
-        if (!canAccessLocation()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(INITIAL_PERMS, INITIAL_REQUEST);
-            }
-        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.canDrawOverlays(this)) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
@@ -150,14 +149,24 @@ public class MainActivity extends AppCompatActivity {
         this.adapter = new EventListAdapter(this.eventArrayList, this);
         recyclerView.setAdapter(this.adapter);
         registerForContextMenu(recyclerView);
+
+         /*Reset to false every time the app is opened*/
+        this.locationDismissed = false;
+        this.locPermissionAsked = false;
     }
 
     // Update array when fragment comes back into display
     @Override
     public void onResume() {
-        ensureLocationEnabled();
-        backFromDialog = false;
-        this.nextEvent.setText(getResources().getString(R.string.calculating));
+        Log.d("ONRESUME", "I ran");
+        if (!this.locationDismissed && !this.backFromDialog) {
+            this.nextEvent.setText(getResources().getString(R.string.calculating));
+            ensureLocationEnabled();
+        } else {
+            this.nextEvent.setText(getResources().getString(R.string.noLocServices));
+        }
+        this.backFromDialog = false;
+
         updateArray();
         super.onResume();
     }
@@ -167,6 +176,8 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
         LocalBroadcastManager.getInstance(this).registerReceiver(deleteReceiver, new IntentFilter(LocationService.BROADCAST_DELETE));
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver, new IntentFilter(LocationService.BROADCAST_ACTION));
+
+
     }
 
     @Override
@@ -178,16 +189,68 @@ public class MainActivity extends AppCompatActivity {
 
     public void ensureLocationEnabled() {
         LocationManager lm = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if (!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) || !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+        boolean bool1 = !lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean bool2 = !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+
+        if (!canAccessLocation() && !this.locPermissionAsked) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                requestPermissions(INITIAL_PERMS, INITIAL_REQUEST);
+                this.locPermissionAsked = true;
+                return;
+            }
+        } else if (this.locPermissionAsked) {
+            if (canAccessLocation()) {
+                nextEvent.setText(getResources().getString(R.string.calculating));
+            } else {
+                nextEvent.setText(getResources().getString(R.string.noLocServices));
+            }
+        }
+
+//        if (permission == -1) {
+//            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
+//            builder.setTitle("Location Services Not Active");
+//            builder.setMessage("Please enable Location Services for GoTime");
+//            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                public void onClick(DialogInterface dialogInterface, int i) {
+//                    backFromDialog = true;
+//                    locationDismissed = false;
+//                    // Show location settings when the user acknowledges the alert dialog
+//                    Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+//                    startActivity(intent);
+//                }
+//            });
+//            builder.setNegativeButton("DISMISS", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//                    backFromDialog = true;
+//                    locationDismissed = true;
+//                    nextEvent.setText(getResources().getString(R.string.noLocServices));
+//                }
+//            });
+//            Dialog alertDialog = builder.create();
+//            alertDialog.setCanceledOnTouchOutside(false);
+//            alertDialog.show();
+
+        if((!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) && locPermissionAsked && canAccessLocation()) || (!locationDismissed && canAccessLocation() && !lm.isProviderEnabled(LocationManager.GPS_PROVIDER) && !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER))) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.DialogStyle);
             builder.setTitle("Location Services Not Active");
-            builder.setMessage("Please enable Location Services and GPS. Ensure Mode is set as \"High accuracy.\"");
+            builder.setMessage("Please enable Location Services");
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    backFromDialog = true;
+                    backFromDialog = false;
+                    locationDismissed = false;
                     // Show location settings when the user acknowledges the alert dialog
                     Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                     startActivity(intent);
+                }
+            });
+            builder.setNegativeButton("DISMISS", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    backFromDialog = true;
+                    locationDismissed = true;
+                    nextEvent.setText(getResources().getString(R.string.noLocServices));
                 }
             });
             Dialog alertDialog = builder.create();
