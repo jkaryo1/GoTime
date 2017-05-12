@@ -139,6 +139,25 @@
                 android:layout_height="200dp"
                 tools:context="com.example.reminderapp.EventActivity" />
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/notes_label" />
+
+            <EditText
+                android:id="@+id/notes"
+                style="@style/EditTextRounded"
+                android:gravity="start"
+                android:inputType="textMultiLine"
+                android:hint="@string/prepTimeHint"
+                android:minLines="5"
+                android:maxLines="5"
+                android:cursorVisible="false"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:longClickable="false"
+                android:imeOptions="actionDone" />
+
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
@@ -160,6 +179,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
             </LinearLayout>
+
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

@@ -38,6 +38,7 @@
     <string name="default_preptime_label">Default Preparation Time (Minutes)</string>
     <string name="alarm_type_label">Alarm Type</string>
     <string name="default_transportmethod_label">Default Transportation Method</string>
+    <string name="notes_label">Notes</string>
     <string name="delete_event">Delete Event</string>
     <string name="down_arrow">Down arrow</string>
     <string name="google_authentication">Google Authentication</string>
