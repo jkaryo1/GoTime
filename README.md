@@ -75,6 +75,29 @@ Permissions:
 GoTime requires full location permission (requires the user to turn on high-
 accuracy mode) and needs permission to draw over apps in order to send alarms.
 
+The logic behind when and how the user is asked for specific
+permissions regarding location servicesis as follows:
+
+	1. If all location services are turned off and gotime does not have 
+	permission, then on start we ask the use to enable location for gotime,
+	then we prompt them with an alert dialog to take them to settings to
+	turn on locaiton services for everthing. 
+
+	2. If location services are turned on, but gotime does not have 
+	permission, we simply ask them to enable permissions for gotime.
+
+	3. If location services are turned off, but gotime has permission to
+	access location, only the dialog prompting the user to turn on location
+	services will showu up.
+
+	4. If either of these are dismissed, we do not ask the user for permissions
+	again until the app has been started again, so as not to annoy the user.
+
+	5. If either gotime does not have permission to access
+	location or all location services are off, the text describing when the
+	next even will be simply says that location services are disabled.
+
+
 CREDIT:
 The WorkaroundMapFragment.java class, as well as its basic implementation, was
 modeled after Alok Nair's post on StackOverflow regarding enabling vertical map
