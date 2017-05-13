@@ -11,41 +11,60 @@ based alarms that take into account both transportation and preparation time to
 alert the user when they should be getting ready for and leaving for an event.
 
 Features:
-	1. Create, edit, and delete events with information such as location, time, 
-	date, title, transportation method, preparation time, and notes abou the event.
 
-	2. Appliction notifies the user when it is time to start getting ready for the
-	event, which is calculated by summing the time of the event, the time it will 
-	take to get there based via the specified transportation method from the user's
-	current location, and the minutes they specified they want to prepare for the
-	event. 
+	1. Create, edit, and delete events with information such as location, time,
+	date, title, transportation method, preparation time, and notes about the
+	event
 
-	3. Application notifies the user when it is time to leave for the event, based
-	on the time of the event and the time it would take to travel there from the
-	user's (updated) current location. 
+	2. Application notifies the user when it is time to start getting ready for
+	the	event, which is calculated by summing the time of the event, the time it
+	will take to get there based via the specified transportation method from
+	the user's current location, and the minutes they specified they want to
+	prepare for the	event
 
-	4. Application notifies the user when it is time for the event.
-	5. Notifications have alarm sounds that can be chosen in the app. Notifications
-	apear as an alert dialog, whether the app is open or running.
+	3. Application notifies the user when it is time to leave for the event,
+	based on the time of the event and the time it would take to travel there
+	from the user's (updated) current location
+
+	4. Application notifies the user when it is time for the event
+
+	5. Notifications have alarm sounds that can be chosen in the app
+	Notifications appear as an alert dialog, whether the app is open or running
+
 	6. Customize default values for preparation time, transportation method, and
 	alarm type
+
 	7. View all events in application
 
 Changes:
-	1. Changed font colors slighty to better match the primary purlple color
-	2. Changed the color of the cancel button so it does not appear disabled.
-	3. If the user cancels an event in the EventActivitywithout making any 
-	changes to it, the alert dialog confirmin the action does not appear to 
-	confirm action
-	4. Fixed errors with location services not working with APIs 23+
-	5. Pressing the back button in the EventActivity acts the same as pressing cancel
-	6. Splash screen removed as it was not being used properly
-	7. If no loction services are enabled, "location services disabled" appears
-	where the time to next evet would usually. 
-	8. Day of week is now included in the dividers between days as suggested 
-	by Prof. Selinski
-	9. Added functionality for notes in each event. 
+	1. Changed font colors slightly to better match the primary purple color
 
+	2. Changed the color of the cancel button so it does not appear disabled
+
+	3. If the user cancels an event in the EventActivity without making any
+	changes to it, the alert dialog confirming the action does not appear to
+	confirm action
+
+	4. Fixed errors with location services not working with APIs 23+
+
+	5. Pressing the back button in the EventActivity acts the same as pressing
+	cancel
+
+	6. Splash screen removed as it was not being used properly
+
+	7. If no location services are enabled, "location services disabled" appears
+	where the time to next event would usually
+
+	8. Day of week is now included in the dividers between days as suggested
+	by Prof. Selinski
+	
+	9. Added functionality for event notes as suggested by Prof. Selinski
+
+NOTE:
+	The addition of notes to each event requires the database structure to be
+	changed. This will cause the app to crash if any previous versions have not
+	first been uninstalled. BEFORE INSTALLING THIS VERSION, UNINSTALL ANY
+	PREVIOUS VERSIONS FROM YOUR DEVICE.
 
 Database Storage:
 We decided to use SQLiteDatabase as opposed to Firebase. This decision was
@@ -92,24 +111,24 @@ GoTime requires full location permission (requires the user to turn on high-
 accuracy mode) and needs permission to draw over apps in order to send alarms.
 
 The logic behind when and how the user is asked for specific
-permissions regarding location servicesis as follows:
+permissions regarding location services is as follows:
 
-	1. If all location services are turned off and gotime does not have 
-	permission, then on start we ask the use to enable location for gotime,
+	1. If all location services are turned off and GoTime does not have
+	permission, then on start we ask the use to enable location for GoTime,
 	then we prompt them with an alert dialog to take them to settings to
-	turn on locaiton services for everthing. 
+	turn on location services for everything.
 
-	2. If location services are turned on, but gotime does not have 
-	permission, we simply ask them to enable permissions for gotime.
+	2. If location services are turned on, but GoTime does not have
+	permission, we simply ask them to enable permissions for GoTime.
 
-	3. If location services are turned off, but gotime has permission to
+	3. If location services are turned off, but GoTime has permission to
 	access location, only the dialog prompting the user to turn on location
-	services will showu up.
+	services will show up.
 
 	4. If either of these are dismissed, we do not ask the user for permissions
 	again until the app has been started again, so as not to annoy the user.
 
-	5. If either gotime does not have permission to access
+	5. If either GoTime does not have permission to access
 	location or all location services are off, the text describing when the
 	next even will be simply says that location services are disabled.
 
