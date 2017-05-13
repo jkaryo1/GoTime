@@ -476,13 +476,6 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                 } else {
                     finish();
                     overridePendingTransition(R.transition.unstack, R.transition.exit);
-                    String toastText = "";
-                    if (isExistingEvent) {
-                        toastText = "Changes Cancelled";
-                    } else {
-                        toastText = "New Event Cancelled";
-                    }
-                    Toast.makeText(activity, toastText, Toast.LENGTH_SHORT).show();
                 }
 
             }
