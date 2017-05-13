@@ -24,7 +24,8 @@ class DatabaseAdapter {
     private static final String LOCATION = "location";
     private static final String PLACE_ID = "place_id";
     private static final String GCAL_ID = "gcal_id";
-    private static final String[] EVENT_COLS = {ID, TITLE, DATE, PREP_TIME, TRANSPORT, LOCATION, PLACE_ID, GCAL_ID};
+    private static final String NOTES = "notes";
+    private static final String[] EVENT_COLS = {ID, TITLE, DATE, PREP_TIME, TRANSPORT, LOCATION, PLACE_ID, GCAL_ID, NOTES};
 
     // Enable getting a single instance of database adapter
     static synchronized DatabaseAdapter getInstance(Context c) {
@@ -67,6 +68,7 @@ class DatabaseAdapter {
         cValues.put(LOCATION, event.location);
         cValues.put(PLACE_ID, event.placeID);
         cValues.put(GCAL_ID, event.gcalID);
+        cValues.put(NOTES, event.notes);
         // Add row to table
         return this.database.insert(EVENTS_TABLE, null, cValues);
     }
@@ -88,6 +90,7 @@ class DatabaseAdapter {
         cValues.put(LOCATION, event.location);
         cValues.put(PLACE_ID, event.placeID);
         cValues.put(GCAL_ID, event.gcalID);
+        cValues.put(NOTES, event.notes);
         // Update row
         return this.database.update(EVENTS_TABLE, cValues, ID + "=" + e_id, null) > 0;
     }
@@ -103,7 +106,7 @@ class DatabaseAdapter {
         private static final String DB_CREATE = "CREATE TABLE " + EVENTS_TABLE + " (" + ID +
                 " INTEGER PRIMARY KEY AUTOINCREMENT, " + TITLE + " TEXT, " + DATE + " LONG, " +
                 PREP_TIME + " INT, " + TRANSPORT + " TEXT, " + LOCATION + " TEXT, " + PLACE_ID +
-                " TEXT, " + GCAL_ID + " TEXT);";
+                " TEXT, " + GCAL_ID + " TEXT, "+ NOTES + " TEXT);";
 
         DatabaseHelper(Context c, String name, SQLiteDatabase.CursorFactory fct, int version) {
             super(c, name, fct, version);

@@ -13,6 +13,9 @@
     <string name="timeLabel">Event Time</string>
     <string name="timeHint">Select Time</string>
 
+    <string name="notes_label">Notes</string>
+    <string name="notes_hint">Notes about the event</string>
+
     <string name="prepTimeLabel">Minutes to Prepare</string>
     <string name="prepTimeHint">Enter Minutes to Prepare</string>
     <string name="defaultPrepTimeHint">Enter Default Preparation Time</string>
@@ -38,6 +41,7 @@
     <string name="default_preptime_label">Default Preparation Time (Minutes)</string>
     <string name="alarm_type_label">Alarm Type</string>
     <string name="default_transportmethod_label">Default Transportation Method</string>
+
     <string name="delete_event">Delete Event</string>
     <string name="down_arrow">Down arrow</string>
     <string name="google_authentication">Google Authentication</string>

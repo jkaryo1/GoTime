@@ -29,6 +29,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -69,6 +70,8 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
     private String dateString="";
     private EditText timeView;
     private String timeString="";
+    private EditText notesInput;
+    private String notesString="";
     private Button saveButton;
     private Button cancelButton;
     private EditText titleInput;
@@ -95,6 +98,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
     private static final String LOCATION = "location";
     private static final String PLACE_ID = "place_id";
     private static final String GCAL_ID = "gcal_id";
+    private static final String NOTES = "notes";
 
     private static final String TIME_FORMAT = "h:mm a"; //In which you need put here
     private static final SimpleDateFormat stf = new SimpleDateFormat(TIME_FORMAT, Locale.getDefault());
@@ -153,6 +157,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                     @Override
                     public void onClick(View v) {
                         autocompleteFragment.setText("");
+                        placeIdInput = null;
                         mMap.clear();
                     }
                 });
@@ -182,6 +187,8 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         this.timeView = (EditText) findViewById(R.id.time);
         this.titleInput = (EditText) findViewById(R.id.title_input);
         this.prepTimeInput = (EditText) findViewById(R.id.prep_time);
+        this.notesInput = (EditText) findViewById(R.id.notes_input);
+
         final RelativeLayout transportLayout = (RelativeLayout) findViewById(R.id.transport_spinner_view);
 
         this.transportMethod = (Spinner) transportLayout.findViewById(R.id.transport_spinner);
@@ -202,6 +209,7 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         }
         setListeners(this.titleInput);
         setListeners(this.prepTimeInput);
+        setListeners(this.notesInput);
 
         Intent intent = getIntent();
         this.isExistingEvent = intent.getBooleanExtra("EXISTING_EVENT", false);
@@ -217,14 +225,17 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             this.placeString = location;
             String placeID = intent.getStringExtra(PLACE_ID);
             String gcalID = intent.getStringExtra(GCAL_ID);
+            String notes = intent.getStringExtra(NOTES);
+            this.notesString = notes;
             this.placeNameInput = location;
             this.placeIdInput = placeID;
-            this.event = new Event(id, title, dateMillis, prepTime, transport, location, placeID, gcalID);
+            this.event = new Event(id, title, dateMillis, prepTime, transport, location, placeID, gcalID, notes);
             this.titleInput.setText(this.event.title);
             this.dateString = this.event.getDate();
             this.dateView.setText(this.dateString);
             this.timeString = this.event.getTime();
             this.timeView.setText(this.event.getTime());
+            this.notesInput.setText(notes);
             String prepText = prepTime + "";
             if (prepTime == 1) {
                 prepText += " minute";
@@ -261,6 +272,21 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             this.transportMethod.setSelection(transportType);
             this.transportString = this.transportMethod.getSelectedItem().toString();
         }
+
+        notesInput.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (v.getId() == R.id.notes_input) {
+                    v.getParent().requestDisallowInterceptTouchEvent(true);
+                    switch (event.getAction() & MotionEvent.ACTION_MASK) {
+                        case MotionEvent.ACTION_UP:
+                            v.getParent().requestDisallowInterceptTouchEvent(false);
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
 
         final TimePickerDialog.OnTimeSetListener time = new TimePickerDialog.OnTimeSetListener() {
             @Override
@@ -347,19 +373,11 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             @Override
             public void onClick(View v) {
                 // Ensure all fields are completed
-                Boolean incomplete = titleInput.getText().toString().equals("");
-                if (!incomplete) {
-                    incomplete = dateView.getText().toString().equals("");
-                    if (!incomplete) {
-                        incomplete = timeView.getText().toString().equals("");
-                        if (!incomplete) {
-                            incomplete = prepTimeInput.getText().toString().equals("");
-                            if (!incomplete) {
-                                incomplete = placeIdInput == null || placeIdInput.equals("");
-                            }
-                        }
-                    }
-                }
+//                Log.d("SAVE", placeIdInput);
+                Boolean incomplete = titleInput.getText().toString().equals("") || dateView.getText().toString().equals("")
+                        || timeView.getText().toString().equals("") || timeView.getText().toString().equals("")
+                        ||  prepTimeInput.getText().toString().equals("") || placeIdInput == null;
+
                 if (incomplete) {
                     Drawable badIcon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_dialog_alert, null);
                     if (badIcon != null) {
@@ -377,22 +395,11 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                     // Create confirmation dialog
                     // On confirm, save settings, update prefs, and create Toast
                     if(isExistingEvent) {
-                        Boolean identical = titleInput.getText().toString().equals(titleString);
-                        if (identical) {
-                            identical = dateView.getText().toString().equals(dateString);
-                            if (identical) {
-                                identical = timeView.getText().toString().equals(timeString);
-                                if (identical) {
-                                    identical = prepTimeInput.getText().toString().equals(prepTimeString);
-                                    if (identical) {
-                                        identical = transportMethod.getSelectedItem().toString().equals(transportString);
-                                        if (identical) {
-                                            identical = placeNameInput.equals(placeString);
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                        Boolean identical = titleInput.getText().toString().equals(titleString) && dateView.getText().toString().equals(dateString)
+                                && timeView.getText().toString().equals(timeString) && prepTimeInput.getText().toString().equals(prepTimeString)
+                                && transportMethod.getSelectedItem().toString().equals(transportString) && placeNameInput.equals(placeString)
+                                && notesInput.getText().toString().equals(notesString);
+
                         if (!identical) {
                             new AlertDialog.Builder(activity).setTitle("Update Event")
                                     .setMessage("Are you sure you want to update event?")
@@ -430,22 +437,10 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         this.cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Boolean identical = titleInput.getText().toString().equals(titleString);
-                if (identical) {
-                    identical = dateView.getText().toString().equals(dateString);
-                    if (identical) {
-                        identical = timeView.getText().toString().equals(timeString);
-                        if (identical) {
-                            identical = prepTimeInput.getText().toString().equals(prepTimeString);
-                            if (identical) {
-                                identical = transportMethod.getSelectedItem().toString().equals(transportString);
-                                if (identical) {
-                                    identical = placeNameInput.equals(placeString);
-                                }
-                            }
-                        }
-                    }
-                }
+                Boolean identical = titleInput.getText().toString().equals(titleString) && dateView.getText().toString().equals(dateString)
+                        && timeView.getText().toString().equals(timeString) && prepTimeInput.getText().toString().equals(prepTimeString)
+                        && transportMethod.getSelectedItem().toString().equals(transportString) && placeNameInput.equals(placeString) && notesInput.getText().toString().equals(notesString);
+
                 if (!identical) {
                     Drawable icon = ResourcesCompat.getDrawable(getResources(), android.R.drawable.ic_dialog_alert, null);
                     if (icon != null) {
@@ -481,13 +476,6 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
                 } else {
                     finish();
                     overridePendingTransition(R.transition.unstack, R.transition.exit);
-                    String toastText = "";
-                    if (isExistingEvent) {
-                        toastText = "Changes Cancelled";
-                    } else {
-                        toastText = "New Event Cancelled";
-                    }
-                    Toast.makeText(activity, toastText, Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -664,10 +652,11 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             int spaceIndex = prepTimeString.indexOf(" ");
             int prepTime = Integer.parseInt(prepTimeString.substring(0, spaceIndex));
             String transport = this.transportMethod.getSelectedItem().toString();
+            String notes = this.notesInput.getText().toString();
             /*Need to catch case where this.placeIdInput is null*/
 
 
-            Event newEvent = new Event(id, title, date, prepTime, transport, placeNameInput,placeIdInput,"nullgcalEvent");
+            Event newEvent = new Event(id, title, date, prepTime, transport, placeNameInput,placeIdInput,"nullgcalEvent",notes);
             this.dbAdapter.updateLesson((long) id, newEvent);
 
 
@@ -690,9 +679,10 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
             int spaceIndex = prepTimeString.indexOf(" ");
             int prepTime = Integer.parseInt(prepTimeString.substring(0, spaceIndex));
             String transport = this.transportMethod.getSelectedItem().toString();
+            String notes = this.notesInput.getText().toString();
             /*Need to catch case where this.placeIdInput is null*/
 
-            Event newEvent = new Event(-1, title, date, prepTime, transport, placeNameInput,placeIdInput,"nullgcalEvent");
+            Event newEvent = new Event(-1, title, date, prepTime, transport, placeNameInput,placeIdInput,"nullgcalEvent",notes);
             dbAdapter.insertItem(newEvent);
         } catch (Exception e) {
             e.printStackTrace();

@@ -11,25 +11,41 @@ based alarms that take into account both transportation and preparation time to
 alert the user when they should be getting ready for and leaving for an event.
 
 Features:
-1) Create and edit events that will alert the user when they need to get ready
-for and leave for the event
-2) Sync with events in Google Calendar to minimize user hassle
-3) Customize default values for preparation time, transportation method, and
-alarm type
-4) View and search for all events in application
+	1. Create, edit, and delete events with information such as location, time, 
+	date, title, transportation method, preparation time, and notes abou the event.
 
-Design Changes:
-1) Removed navigation drawer to simplify app
-2) Removed in-app alert screen, as users will be notified about events through
-external alarms
-3) Combined Add Event and View Event activities into a single activity since
-they are practically the same
-4) Changed placement of buttons to improve user experience
-5) Made application colors more consistent to better the UI
-6) Added better navigation to settings activity
-7) Changed Edittexts to be white with a purple border
-8) Edittexts are highlighted when in focus
-9) Form validation was added to the event and settings activities
+	2. Appliction notifies the user when it is time to start getting ready for the
+	event, which is calculated by summing the time of the event, the time it will 
+	take to get there based via the specified transportation method from the user's
+	current location, and the minutes they specified they want to prepare for the
+	event. 
+
+	3. Application notifies the user when it is time to leave for the event, based
+	on the time of the event and the time it would take to travel there from the
+	user's (updated) current location. 
+
+	4. Application notifies the user when it is time for the event.
+	5. Notifications have alarm sounds that can be chosen in the app. Notifications
+	apear as an alert dialog, whether the app is open or running.
+	6. Customize default values for preparation time, transportation method, and
+	alarm type
+	7. View all events in application
+
+Changes:
+	1. Changed font colors slighty to better match the primary purlple color
+	2. Changed the color of the cancel button so it does not appear disabled.
+	3. If the user cancels an event in the EventActivitywithout making any 
+	changes to it, the alert dialog confirmin the action does not appear to 
+	confirm action
+	4. Fixed errors with location services not working with APIs 23+
+	5. Pressing the back button in the EventActivity acts the same as pressing cancel
+	6. Splash screen removed as it was not being used properly
+	7. If no loction services are enabled, "location services disabled" appears
+	where the time to next evet would usually. 
+	8. Day of week is now included in the dividers between days as suggested 
+	by Prof. Selinski
+	9. Added functionality for notes in each event. 
+
 
 Database Storage:
 We decided to use SQLiteDatabase as opposed to Firebase. This decision was
