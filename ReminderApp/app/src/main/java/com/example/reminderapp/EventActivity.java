@@ -25,6 +25,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -210,6 +211,9 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         setListeners(this.titleInput);
         setListeners(this.prepTimeInput);
         setListeners(this.notesInput);
+
+        this.notesInput.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        this.notesInput.setRawInputType(InputType.TYPE_CLASS_TEXT);
 
         Intent intent = getIntent();
         this.isExistingEvent = intent.getBooleanExtra("EXISTING_EVENT", false);
