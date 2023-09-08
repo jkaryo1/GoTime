@@ -19,6 +19,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
+import io.github.pixee.security.BoundedLineReader;
 
 import org.json.JSONObject;
 
@@ -338,7 +339,7 @@ public class LocationService extends Service
 
                     String inputLine;
 
-                    while ((inputLine = in.readLine()) != null) {
+                    while ((inputLine = BoundedLineReader.readLine(in, 5_000_000)) != null) {
                         response.append(inputLine);
                     }
 
