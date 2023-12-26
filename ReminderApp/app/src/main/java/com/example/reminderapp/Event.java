@@ -89,7 +89,7 @@ class Event {
     }
     void setTime(String t) {
         int hour = Integer.parseInt(t.substring(0,2));
-        if (t.substring(6).equals("PM")) {
+        if ("PM".equals(t.substring(6))) {
             hour += 12;
         }
         this.date.set(this.date.get(Calendar.YEAR), this.date.get(Calendar.MONTH),
