@@ -610,8 +610,8 @@ public class EventActivity extends AppCompatActivity implements OnMapReadyCallba
         if (et.getId() == R.id.prep_time) {
             String text = et.getText().toString();
             int spaceIndex = text.indexOf(" ");
-            if (spaceIndex == -1 && !text.equals("")) {
-                if (text.equals("1")) {
+            if (spaceIndex == -1 && !"".equals(text)) {
+                if ("1".equals(text)) {
                     text += " minute";
                 } else {
                     text += " minutes";
