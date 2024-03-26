@@ -254,8 +254,8 @@ public class SettingsActivity extends AppCompatActivity {
         this.defaultPrepTime.clearFocus();
         String text = this.defaultPrepTime.getText().toString();
         int spaceIndex = text.indexOf(" ");
-        if (spaceIndex == -1 && !text.equals("")) {
-            if (text.equals("1")) {
+        if (spaceIndex == -1 && !"".equals(text)) {
+            if ("1".equals(text)) {
                 text += " minute";
             } else {
                 text += " minutes";
