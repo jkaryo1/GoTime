@@ -20,6 +20,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 import io.github.pixee.security.BoundedLineReader;
+import io.github.pixee.security.HostValidator;
+import io.github.pixee.security.Urls;
 
 import org.json.JSONObject;
 
@@ -329,7 +331,7 @@ public class LocationService extends Service
         @Override
         protected Integer doInBackground(String... urls) {
             try {
-                URL url = new URL(urls[0]);
+                URL url = Urls.create(urls[0], Urls.HTTP_PROTOCOLS, HostValidator.DENY_COMMON_INFRASTRUCTURE_TARGETS);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                 StringBuilder response = new StringBuilder();
 
